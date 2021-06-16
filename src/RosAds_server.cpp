@@ -5,8 +5,8 @@
 #include "beckhoff_plc_control/ADSReadVariables.h"
 #include <tinyxml.h>
 #include <cstdlib>
-#include "AdsLib/AdsLib.h"
-#include "AdsLib/AdsVariable.h"
+#include "../lib/AdsLib/AdsLib.h"
+#include "../lib/AdsLib/AdsVariable.h"
 #include <time.h>
 
 using namespace std;

@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 3.0.2)
 project(beckhoff_plc_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -126,8 +131,20 @@ include_directories(
 )
 
 ## Declare a C++ library
-#add_library(RosAdsLib src/RosAdsLib.cpp)
+add_library(libAdsLib lib/AdsLib/AdsDef.cpp
+		      lib/AdsLib/AdsDevice.cpp
+		      lib/AdsLib/AdsFile.cpp
+		      lib/AdsLib/Log.cpp
+		      lib/AdsLib/Sockets.cpp
+		      lib/AdsLib/Frame.cpp
+		      lib/AdsLib/standalone/AdsLib.cpp
+		      lib/AdsLib/standalone/AmsConnection.cpp
+		      lib/AdsLib/standalone/AmsNetId.cpp
+		      lib/AdsLib/standalone/AmsPort.cpp
+		      lib/AdsLib/standalone/AmsRouter.cpp
+		      lib/AdsLib/standalone/NotificationDispatcher.cpp
 
+)
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -147,12 +164,14 @@ include_directories(
 ## Add cmake target dependencies of the executable
 ## same as for the library above
  #add_dependencies(example ${PROJECT_NAME}_gencpp)
- add_dependencies(RosAds_server ${PROJECT_NAME}_gencpp)
+ add_dependencies(RosAds_server ${PROJECT_NAME}_gencpp libAdsLib)
+set_property(TARGET RosAds_server PROPERTY CXX_STANDARD 11)  # 98, 11 or 14
 
+set_property(TARGET RosAds_server PROPERTY CXX_STANDARD_REQUIRED ON)
 ## Specify libraries to link a library or executable target against
  #target_link_libraries(RosAdsLib ${catkin_LIBRARIES})
  #target_link_libraries(example ${catkin_LIBRARIES} RosAdsLib)
- target_link_libraries(RosAds_server ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} ${CMAKE_CURRENT_LIST_DIR}/include/libAdsLib.a pthread)
+ target_link_libraries(RosAds_server ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} libAdsLib -lpthread )
 
 #############
 ## Install ##
