@@ -16,7 +16,8 @@ class RosAds_server_node
 private:
   string m_remoteNetId;
   string m_remoteIpV4;
-
+  string m_PLCFileDefinitionPath;
+  string m_localNetId_param;
   ros::ServiceServer m_writingValueService;
   ros::ServiceServer m_readingValueService;
   ros::ServiceServer m_readingVariablesService;
@@ -27,9 +28,16 @@ private:
   ///Mutex utile pour la communication
   boost::mutex m_ComMutex;
 
+ std::map<string,string> VariableMapping;
+
+
   int initRoute();
+  bool loadPLcVar();
+
+  string checkVariable(string varName);
 public :
-  RosAds_server_node(){};
+  RosAds_server_node();
+  ~RosAds_server_node();
   int main(int argc, char **argv);
 
   bool adsWriteValue(beckhoff_plc_control::ADSWriteValue::Request  &req, beckhoff_plc_control::ADSWriteValue::Response &res);

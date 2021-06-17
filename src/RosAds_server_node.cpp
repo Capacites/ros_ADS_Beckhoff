@@ -4,20 +4,31 @@ using namespace std;
 
 TiXmlDocument doc;
 
-
-
-
-string checkVariable(string varName){
-  string varType;
-  TiXmlNode* firstNode = doc.FirstChildElement( "PlcProjectInfo" )->FirstChildElement( "Symbols" )->FirstChildElement( "Symbol" );
-
-  for(TiXmlNode* currentNode = firstNode ; currentNode ; currentNode = currentNode->NextSiblingElement()){
-    if(currentNode->FirstChildElement( "Name" )->GetText() == varName){
-      varType = currentNode->FirstChildElement( "Type" )->GetText();
-      break;
-    }
+RosAds_server_node::~RosAds_server_node()
+{
+  m_ComMutex.lock();
+  if(m_route)
+  {
+    delete m_route;
+  }
+  if(m_AmsNetIdremoteNetId)
+  {
+    delete m_AmsNetIdremoteNetId;
   }
 
+
+}
+
+
+string RosAds_server_node::checkVariable(string varName){
+  string varType="";
+  ;
+    std::map<string,string>::iterator it;
+     it= VariableMapping.find(varName);
+  if(it != VariableMapping.end())
+  {
+    varType = it->second;
+  }
   return varType;
 }
 
@@ -253,86 +264,106 @@ do
 bool RosAds_server_node::adsReadValue(beckhoff_plc_control::ADSReadValue::Request  &req, beckhoff_plc_control::ADSReadValue::Response &res)
 {
 
-/*
+
+  bool bresult =  true;;
 
   string varType = checkVariable(req.varName);
 
   if(varType == ""){
     ROS_ERROR("Variable name not correct");
-    return false;
+    bresult = false;
     }
-
-  if(varType == "BOOL"){
-
-    AdsVariable<bool> var {route, req.varName};
+do{
+    m_ComMutex.lock();
+  if(varType == "BOOL")
+  {
+    AdsVariable<bool> var {*m_route, req.varName};
     res.value = var;
-    if(var == false){
+    if(var == false)
+    {
       ROS_INFO("The %s %s equals false",varType.c_str(),req.varName.c_str());
-    }else{
+    }
+    else
+    {
       ROS_INFO("The %s %s equals true",varType.c_str(),req.varName.c_str());
     }
-
-  }else if(varType == "BYTE")
+    break;
+  }
+  if(varType == "BYTE")
   {
-    AdsVariable<uint8_t> var {route, req.varName};
+    AdsVariable<uint8_t> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint8_t)res.value);
-
+    break;
   }
 
-  else if(varType == "WORD" || varType == "UINT")
+  if(varType == "WORD" || varType == "UINT")
   {
-    AdsVariable<uint16_t> var {route, req.varName};
+    AdsVariable<uint16_t> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)res.value);
+    break;
   }
-  else if(varType == "INT")
+
+  if(varType == "INT")
   {
-    AdsVariable<int16_t> var {route, req.varName};
+    AdsVariable<int16_t> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int16_t)res.value);
-
+    break;
   }
-  else if(varType == "DWORD" || varType == "UDINT")
+
+  if(varType == "DWORD" || varType == "UDINT")
   {
-    AdsVariable<uint32_t> var {route, req.varName};
+    AdsVariable<uint32_t> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)res.value);
+    break;
+  }
 
-  }else if(varType == "DINT")
+  if(varType == "DINT")
   {
-    AdsVariable<int32_t> var {route, req.varName};
+    AdsVariable<int32_t> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int32_t)res.value);
+    break;
   }
-  else if(varType == "LWORD" || varType == "ULINT")
+
+  if(varType == "LWORD" || varType == "ULINT")
   {
-    AdsVariable<uint64_t> var {route, req.varName};
+    AdsVariable<uint64_t> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %lu",varType.c_str(),req.varName.c_str(),(uint64_t)res.value);
+    break;
   }
-  else if(varType == "LINT")
+
+  if(varType == "LINT")
   {
-    AdsVariable<int64_t> var {route, req.varName};
+    AdsVariable<int64_t> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %ld",varType.c_str(),req.varName.c_str(),int64_t(res.value));
-  }else if(varType == "REAL")
-  {
+    break;
+  }
 
-    AdsVariable<float> var {route, req.varName};
+  if(varType == "REAL")
+  {
+    AdsVariable<float> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %f",varType.c_str(),req.varName.c_str(),(float)res.value);
+    break;
   }
-  else if(varType == "LREAL")
+
+  if(varType == "LREAL")
   {
-    AdsVariable<double> var {route, req.varName};
+    AdsVariable<double> var {*m_route, req.varName};
     res.value = var;
     ROS_INFO("The %s %s equals %lf",varType.c_str(),req.varName.c_str(),res.value);
-
+    break;
   }
-  else if(varType == "DATE")
+
+  if(varType == "DATE")
   {
-    AdsVariable<uint32_t> var {route, req.varName};
+    AdsVariable<uint32_t> var {*m_route, req.varName};
     res.value = var;
     ros::Time currentDate(var);
     time_t tDate(currentDate.toSec());
@@ -346,10 +377,12 @@ bool RosAds_server_node::adsReadValue(beckhoff_plc_control::ADSReadValue::Reques
              tmDate.tm_hour,
              tmDate.tm_min,
              tmDate.tm_sec);
+    break;
   }
-  else if(varType == "TIME" || varType == "TIME_OF_DAY" || varType == "LTIME")
+
+  if(varType == "TIME" || varType == "TIME_OF_DAY" || varType == "LTIME")
   {
-    AdsVariable<uint32_t> var {route, req.varName};
+    AdsVariable<uint32_t> var {*m_route, req.varName};
     res.value = var;
     long lTime = (long)(var);
     long lMs = lTime % 1000;
@@ -357,46 +390,60 @@ bool RosAds_server_node::adsReadValue(beckhoff_plc_control::ADSReadValue::Reques
     long lMin = (lTime/60000) % 60;
     long lHeu = (lTime/3600000) % 24;
     ROS_INFO("%s equals %luh%lum%lus%lums",req.varName.c_str(),lHeu,lMin,lSec,lMs);
+    break;
+  }
+
+  m_ComMutex.unlock();
+  ROS_ERROR("Variable type not correct");
+  bresult = false;
+  break;
+  }
+  while(false);
+
+  return bresult;
+}
+
+
+bool RosAds_server_node::loadPLcVar()
+{
+  bool bresult = false;
+
+  if (doc.LoadFile(m_PLCFileDefinitionPath.c_str()))
+  {
+    ROS_INFO("Reading your PLC config file ...");
+    TiXmlNode* firstNode = doc.FirstChildElement( "PlcProjectInfo" )->FirstChildElement( "Symbols" )->FirstChildElement( "Symbol" );
+
+    for(TiXmlNode* currentNode = firstNode ; currentNode ; currentNode = currentNode->NextSiblingElement())
+    {
+      string name = currentNode->FirstChildElement( "Name" )->GetText();
+      string type =currentNode->FirstChildElement( "Type" )->GetText();
+      VariableMapping[name] = type;
+
+    }
+    bresult = true;
   }
   else
   {
-    ROS_ERROR("Variable type not correct");
-    return false;
+    ROS_INFO("Failed to load the PLC config file");
   }
-*/
-  return true;
+
+    return bresult;
 }
 
 bool RosAds_server_node::adsReadVariables(beckhoff_plc_control::ADSReadVariables::Request  &req, beckhoff_plc_control::ADSReadVariables::Response &res)
 {
-  /*
-  string filePath = ros::package::getPath("beckhoff_plc_control") +"/include/"+req.fileName;
 
-  if (doc.LoadFile(filePath.c_str()))
-  {
-    ROS_INFO("Reading your PLC config file ...");
-  int i=0;
-  TiXmlNode* firstNode = doc.FirstChildElement( "PlcProjectInfo" )->FirstChildElement( "Symbols" )->FirstChildElement( "Symbol" );
+  res.size = VariableMapping.size();
+  res.varNames = vector<string>();
+  res.varTypes = vector<string>();
 
-  for(TiXmlNode* currentNode = firstNode ; currentNode ; currentNode = currentNode->NextSiblingElement()){
-    i++;
+  for (auto& x: VariableMapping) {
+    res.varNames.push_back(x.first);
+    res.varTypes.push_back(x.second);
   }
-  res.varNames = vector<string>(i,"");
-  res.varTypes = vector<string>(i,"");
-  i=0;
-  for(TiXmlNode* currentNode = firstNode ; currentNode ; currentNode = currentNode->NextSiblingElement()){
-    res.varNames[i] = currentNode->FirstChildElement( "Name" )->GetText();
-    res.varTypes[i] = currentNode->FirstChildElement( "Type" )->GetText();
-    i++;
-  }
-    return true;
-  }
-  else
-  {
-  ROS_INFO("Failed to load the PLC config file");
-  */
-    return false;
- // }
+
+  return true;
+
 }
 int main(int argc, char **argv)
 {
@@ -415,19 +462,59 @@ int RosAds_server_node::initRoute()
 }
 int RosAds_server_node::main(int argc, char **argv)
 {
-  string localNetId_param;
 
   ros::init(argc, argv, "RosAds_server");
   ros::NodeHandle n;
+  ros::NodeHandle nprive("~");
 
-  n.getParam("/RosAds_server/localNetId", localNetId_param);
-  AdsSetLocalAddress(localNetId_param);
+  if(nprive.hasParam("localNetId"))
+  {
+
+    nprive.getParam("localNetId", m_localNetId_param);
+    AdsSetLocalAddress(m_localNetId_param);
+  }
+  else {
+    ROS_ERROR("Param localNetId unknown");
+    return 0;
+  }
 
   //------------------ Routing to remote PLC --------------------
-  n.getParam("/RosAds_server/remoteNetId", m_remoteNetId);
-  n.getParam("/RosAds_server/remoteIpV4", m_remoteIpV4);
+  if(nprive.hasParam("remoteNetId"))
+  {
+
+    nprive.getParam("remoteNetId", m_remoteNetId);
+    AdsSetLocalAddress(m_remoteNetId);
+  }
+  else {
+    ROS_ERROR("Param remoteNetId unknown");
+    return 0;
+  }
 
 
+  if(nprive.hasParam("remoteIpV4"))
+  {
+
+    nprive.getParam("remoteIpV4", m_remoteIpV4);
+    AdsSetLocalAddress(m_remoteIpV4);
+  }
+  else {
+    ROS_ERROR("Param remoteIpV4 unknown");
+    return 0;
+  }
+
+
+  if(nprive.hasParam("PLCPathFile"))
+  {
+
+    nprive.getParam("PLCPathFile", m_remoteIpV4);
+    AdsSetLocalAddress(m_remoteIpV4);
+  }
+  else {
+    ROS_ERROR("Param PLCPathFile unknown");
+    return 0;
+  }
+
+  loadPLcVar();
   initRoute();
   m_writingValueService = n.advertiseService("ADS_write_value", &RosAds_server_node::adsWriteValue,this);
   m_readingValueService = n.advertiseService("ADS_read_value", &RosAds_server_node::adsReadValue,this);

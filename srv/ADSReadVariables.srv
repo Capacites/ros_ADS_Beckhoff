@@ -2,3 +2,4 @@ string fileName
 ---
 string[] varNames
 string[] varTypes
+int32 size
