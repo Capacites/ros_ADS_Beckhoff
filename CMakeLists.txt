@@ -112,7 +112,6 @@ find_package(TinyXML REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
   LIBRARIES RosAdsLib
   CATKIN_DEPENDS roscpp std_msgs roslib
 #  DEPENDS system_lib
@@ -132,17 +131,17 @@ include_directories(
 
 ## Declare a C++ library
 add_library(libAdsLib lib/AdsLib/AdsDef.cpp
-		      lib/AdsLib/AdsDevice.cpp
-		      lib/AdsLib/AdsFile.cpp
-		      lib/AdsLib/Log.cpp
-		      lib/AdsLib/Sockets.cpp
-		      lib/AdsLib/Frame.cpp
-		      lib/AdsLib/standalone/AdsLib.cpp
-		      lib/AdsLib/standalone/AmsConnection.cpp
-		      lib/AdsLib/standalone/AmsNetId.cpp
-		      lib/AdsLib/standalone/AmsPort.cpp
-		      lib/AdsLib/standalone/AmsRouter.cpp
-		      lib/AdsLib/standalone/NotificationDispatcher.cpp
+                      lib/AdsLib/AdsDevice.cpp
+                      lib/AdsLib/AdsFile.cpp
+                      lib/AdsLib/Log.cpp
+                      lib/AdsLib/Sockets.cpp
+                      lib/AdsLib/Frame.cpp
+                      lib/AdsLib/standalone/AdsLib.cpp
+                      lib/AdsLib/standalone/AmsConnection.cpp
+                      lib/AdsLib/standalone/AmsNetId.cpp
+                      lib/AdsLib/standalone/AmsPort.cpp
+                      lib/AdsLib/standalone/AmsRouter.cpp
+                      lib/AdsLib/standalone/NotificationDispatcher.cpp
 
 )
 ## Add cmake target dependencies of the library
@@ -154,7 +153,7 @@ add_library(libAdsLib lib/AdsLib/AdsDef.cpp
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  #add_executable(example src/example.cpp)
- add_executable(RosAds_server src/RosAds_server.cpp)
+ add_executable(RosAds_server src/RosAds_server_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
