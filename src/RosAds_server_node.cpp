@@ -19,6 +19,9 @@ RosAds_server_node::~RosAds_server_node()
 
 }
 
+RosAds_server_node::RosAds_server_node()
+{
+}
 
 string RosAds_server_node::checkVariable(string varName){
   string varType="";
@@ -56,12 +59,11 @@ do
     {
       if((uint8_t)req.value == req.value)
       {
-        AdsVariable<bool> var {*m_route, req.varName};
         if((uint8_t)req.value == 0){
-          var = false;
+          *BOOLRouteMapping[req.varName] = false;
           ROS_INFO("The %s %s now equals false",varType.c_str(),req.varName.c_str());
         }else{
-          var = true;
+          *BOOLRouteMapping[req.varName] = true;
           ROS_INFO("The %s %s now equals true",varType.c_str(),req.varName.c_str());
         }
       }
@@ -77,8 +79,7 @@ do
     {
       if((uint8_t)req.value == req.value)
       {
-        AdsVariable<uint8_t> var {*m_route, req.varName};
-        var = (uint8_t)req.value;
+        *BYTERouteMapping[req.varName] = (uint8_t)req.value;
         ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint8_t)req.value);
       }
       else
@@ -93,8 +94,7 @@ do
     {
       if((uint16_t)req.value == req.value)
       {
-        AdsVariable<uint16_t> var {*m_route, req.varName};
-        var = (uint16_t)req.value;
+        *USINTRouteMapping[req.varName] = (uint16_t)req.value;
         ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)req.value);
       }
       else
@@ -108,8 +108,7 @@ do
     {
       if((int16_t)req.value == req.value)
       {
-        AdsVariable<int16_t> var {*m_route, req.varName};
-        var = (int16_t)req.value;
+        *SINTRouteMapping[req.varName] = (int16_t)req.value;
         ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int16_t)req.value);
       }
       else
@@ -123,8 +122,7 @@ do
     {
       if((uint32_t)req.value == req.value)
       {
-        AdsVariable<uint32_t> var {*m_route, req.varName};
-        var = (uint32_t)req.value;
+        *UINTRouteMapping[req.varName] = (uint32_t)req.value;
         ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)req.value);
       }else
       {
@@ -138,8 +136,7 @@ do
     {
       if((int32_t)req.value == req.value)
       {
-        AdsVariable<int32_t> var {*m_route, req.varName};
-        var = (int32_t)req.value;
+        *INTRouteMapping[req.varName] = (int32_t)req.value;
         ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int32_t)req.value);
       }
       else
@@ -153,8 +150,7 @@ do
     {
       if((uint64_t)req.value == req.value)
       {
-        AdsVariable<uint64_t> var {*m_route, req.varName};
-        var = (uint64_t)req.value;
+        *ULONGRouteMapping[req.varName] = (uint64_t)req.value;
         ROS_INFO("The %s %s now equals %lu",varType.c_str(),req.varName.c_str(),(uint64_t)req.value);
       }
       else
@@ -167,8 +163,7 @@ do
     if(varType == "LINT")
     {
       if((int64_t)req.value == req.value){
-        AdsVariable<int64_t> var {*m_route, req.varName};
-        var = (int64_t)req.value;
+        *LONGRouteMapping[req.varName] = (int64_t)req.value;
         ROS_INFO("The %s %s now equals %ld",varType.c_str(),req.varName.c_str(),int64_t(req.value));
       }
       else
@@ -182,8 +177,7 @@ do
     {
       if((float)req.value/2 != (float)req.value)
       {
-        AdsVariable<float> var {*m_route, req.varName};
-        var = (float)req.value;
+        *FLOATRouteMapping[req.varName] = (float)req.value;
         ROS_INFO("The %s %s now equals %f",varType.c_str(),req.varName.c_str(),(float)req.value);
       }
       else
@@ -195,8 +189,7 @@ do
 
     if(varType == "LREAL")
     {
-      AdsVariable<double> var {*m_route, req.varName};
-      var = req.value;
+      *DOUBLERouteMapping[req.varName] = req.value;
       ROS_INFO("The %s %s now equals %lf",varType.c_str(),req.varName.c_str(),req.value);
       break;
     }
@@ -205,8 +198,7 @@ do
     {
       if((uint32_t)req.value == req.value)
       {
-        AdsVariable<uint32_t> var {*m_route, req.varName};
-        var = (uint32_t)req.value;
+        *UINTRouteMapping[req.varName] = (uint32_t)req.value;
         ros::Time currentDate((uint32_t)req.value);
         time_t tDate(currentDate.toSec());
         tm tmDate;
@@ -231,14 +223,12 @@ do
     {
       if((uint32_t)req.value == req.value)
       {
-
-        AdsVariable<uint32_t> var {*m_route, req.varName};
         if(varType == "TIME" || varType == "TIME_OF_DAY")
         {
-          var = (uint32_t)req.value;
+        	*UINTRouteMapping[req.varName] = (uint32_t)req.value;
         }else if(varType == "LTIME")
         {
-          var = (uint32_t)(req.value * 1000000);
+        	*UINTRouteMapping[req.varName] = (uint32_t)(req.value * 1000000);
         }
         long lTime = (long)(req.value);
         long lMs = lTime % 1000;
@@ -277,9 +267,8 @@ do{
     m_ComMutex.lock();
   if(varType == "BOOL")
   {
-    AdsVariable<bool> var {*m_route, req.varName};
-    res.value = var;
-    if(var == false)
+    res.value = *BOOLRouteMapping[req.varName];
+    if(*BOOLRouteMapping[req.varName] == false)
     {
       ROS_INFO("The %s %s equals false",varType.c_str(),req.varName.c_str());
     }
@@ -291,81 +280,71 @@ do{
   }
   if(varType == "BYTE")
   {
-    AdsVariable<uint8_t> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *BYTERouteMapping[req.varName];
     ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint8_t)res.value);
     break;
   }
 
   if(varType == "WORD" || varType == "UINT")
   {
-    AdsVariable<uint16_t> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *USINTRouteMapping[req.varName];
     ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)res.value);
     break;
   }
 
   if(varType == "INT")
   {
-    AdsVariable<int16_t> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *SINTRouteMapping[req.varName];
     ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int16_t)res.value);
     break;
   }
 
   if(varType == "DWORD" || varType == "UDINT")
   {
-    AdsVariable<uint32_t> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *UINTRouteMapping[req.varName];
     ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)res.value);
     break;
   }
 
   if(varType == "DINT")
   {
-    AdsVariable<int32_t> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *INTRouteMapping[req.varName];
     ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int32_t)res.value);
     break;
   }
 
   if(varType == "LWORD" || varType == "ULINT")
   {
-    AdsVariable<uint64_t> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *ULONGRouteMapping[req.varName];
     ROS_INFO("The %s %s equals %lu",varType.c_str(),req.varName.c_str(),(uint64_t)res.value);
     break;
   }
 
   if(varType == "LINT")
   {
-    AdsVariable<int64_t> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *LONGRouteMapping[req.varName];
     ROS_INFO("The %s %s equals %ld",varType.c_str(),req.varName.c_str(),int64_t(res.value));
     break;
   }
 
   if(varType == "REAL")
   {
-    AdsVariable<float> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *FLOATRouteMapping[req.varName];
     ROS_INFO("The %s %s equals %f",varType.c_str(),req.varName.c_str(),(float)res.value);
     break;
   }
 
   if(varType == "LREAL")
   {
-    AdsVariable<double> var {*m_route, req.varName};
-    res.value = var;
+    res.value = *DOUBLERouteMapping[req.varName];
     ROS_INFO("The %s %s equals %lf",varType.c_str(),req.varName.c_str(),res.value);
     break;
   }
 
   if(varType == "DATE")
   {
-    AdsVariable<uint32_t> var {*m_route, req.varName};
-    res.value = var;
-    ros::Time currentDate(var);
+    res.value = *UINTRouteMapping[req.varName];
+    ros::Time currentDate(*UINTRouteMapping[req.varName]);
     time_t tDate(currentDate.toSec());
     tm tmDate;
     gmtime_r(&tDate,&tmDate);
@@ -382,9 +361,8 @@ do{
 
   if(varType == "TIME" || varType == "TIME_OF_DAY" || varType == "LTIME")
   {
-    AdsVariable<uint32_t> var {*m_route, req.varName};
-    res.value = var;
-    long lTime = (long)(var);
+    res.value = *UINTRouteMapping[req.varName];
+    long lTime = (long)(*UINTRouteMapping[req.varName]);
     long lMs = lTime % 1000;
     long lSec = (lTime/1000) % 60;
     long lMin = (lTime/60000) % 60;
@@ -418,7 +396,48 @@ bool RosAds_server_node::loadPLcVar()
       string name = currentNode->FirstChildElement( "Name" )->GetText();
       string type =currentNode->FirstChildElement( "Type" )->GetText();
       VariableMapping[name] = type;
-
+      do{
+	if(type == "BOOL"){
+		AdsVariable<bool> *var = new AdsVariable<bool>(*m_route, name);
+		BOOLRouteMapping[name] = var;
+	}
+	if(type == "BYTE"){
+		AdsVariable<uint8_t> *var = new AdsVariable<uint8_t>(*m_route, name);
+		BYTERouteMapping[name] = var;
+	}
+	if(type == "WORD" || type == "UINT"){
+		AdsVariable<uint16_t> *var = new AdsVariable<uint16_t>(*m_route, name);
+		USINTRouteMapping[name] = var;
+	}
+	if(type == "INT"){
+		AdsVariable<int16_t> *var = new AdsVariable<int16_t>(*m_route, name);
+		SINTRouteMapping[name] = var;
+	}
+	if(type == "DWORD" || type == "UDINT" || type == "DATE" || type == "TIME" || type == "TIME_OF_DAY" || type == "LTIME"){
+		AdsVariable<uint32_t> *var = new AdsVariable<uint32_t>(*m_route, name);
+		UINTRouteMapping[name] = var;
+	}
+	if(type == "DINT"){
+		AdsVariable<int32_t> *var = new AdsVariable<int32_t>(*m_route, name);
+		INTRouteMapping[name] = var;
+	}
+	if(type == "LWORD" || type == "ULINT"){
+		AdsVariable<uint64_t> *var = new AdsVariable<uint64_t>(*m_route, name);
+		ULONGRouteMapping[name] = var;
+	}
+	if(type == "LINT"){
+		AdsVariable<int64_t> *var = new AdsVariable<int64_t>(*m_route, name);
+		LONGRouteMapping[name] = var;
+	}
+	if(type == "REAL"){
+		AdsVariable<float> *var = new AdsVariable<float>(*m_route, name);
+		FLOATRouteMapping[name] = var;
+	}
+	if(type == "LREAL"){
+		AdsVariable<double> *var = new AdsVariable<double>(*m_route, name);
+		DOUBLERouteMapping[name] = var;
+	}
+      }while(false);
     }
     bresult = true;
   }
@@ -443,11 +462,12 @@ bool RosAds_server_node::adsReadVariables(beckhoff_plc_control::ADSReadVariables
   }
 
   return true;
-
 }
+
 int main(int argc, char **argv)
 {
-
+  RosAds_server_node *node = new RosAds_server_node();
+  return node->main(argc,argv);
 }
 
 int RosAds_server_node::initRoute()
@@ -458,8 +478,10 @@ int RosAds_server_node::initRoute()
   m_AmsNetIdremoteNetId= new AmsNetId(m_remoteNetId);
   char remoteIpV4[m_remoteIpV4.length()+1];
   strcpy(remoteIpV4, m_remoteIpV4.c_str());
-   m_route = new AdsDevice(m_remoteIpV4,*m_AmsNetIdremoteNetId, AMSPORT_R0_PLC_TC3);
+  m_route = new AdsDevice(m_remoteIpV4,*m_AmsNetIdremoteNetId, AMSPORT_R0_PLC_TC3);
+  return 0;
 }
+
 int RosAds_server_node::main(int argc, char **argv)
 {
 
@@ -483,7 +505,6 @@ int RosAds_server_node::main(int argc, char **argv)
   {
 
     nprive.getParam("remoteNetId", m_remoteNetId);
-    AdsSetLocalAddress(m_remoteNetId);
   }
   else {
     ROS_ERROR("Param remoteNetId unknown");
@@ -495,7 +516,6 @@ int RosAds_server_node::main(int argc, char **argv)
   {
 
     nprive.getParam("remoteIpV4", m_remoteIpV4);
-    AdsSetLocalAddress(m_remoteIpV4);
   }
   else {
     ROS_ERROR("Param remoteIpV4 unknown");
@@ -506,8 +526,7 @@ int RosAds_server_node::main(int argc, char **argv)
   if(nprive.hasParam("PLCPathFile"))
   {
 
-    nprive.getParam("PLCPathFile", m_remoteIpV4);
-    AdsSetLocalAddress(m_remoteIpV4);
+    nprive.getParam("PLCPathFile", m_PLCFileDefinitionPath);
   }
   else {
     ROS_ERROR("Param PLCPathFile unknown");
