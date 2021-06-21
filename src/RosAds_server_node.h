@@ -8,8 +8,8 @@
 #include "../lib/AdsLib/AdsLib.h"
 #include "../lib/AdsLib/AdsVariable.h"
 #include <time.h>
-
 #include <boost/thread.hpp>
+
 using namespace std;
 class RosAds_server_node
 {
@@ -28,8 +28,17 @@ private:
   ///Mutex utile pour la communication
   boost::mutex m_ComMutex;
 
- std::map<string,string> VariableMapping;
-
+  std::map<string,string> VariableMapping;
+  std::map<string,AdsVariable<bool>*> BOOLRouteMapping;
+  std::map<string,AdsVariable<uint8_t>*> BYTERouteMapping;
+  std::map<string,AdsVariable<uint16_t>*> USINTRouteMapping;
+  std::map<string,AdsVariable<int16_t>*> SINTRouteMapping;
+  std::map<string,AdsVariable<uint32_t>*> UINTRouteMapping;
+  std::map<string,AdsVariable<int32_t>*> INTRouteMapping;
+  std::map<string,AdsVariable<uint64_t>*> ULONGRouteMapping;
+  std::map<string,AdsVariable<int64_t>*> LONGRouteMapping;
+  std::map<string,AdsVariable<float>*> FLOATRouteMapping;
+  std::map<string,AdsVariable<double>*> DOUBLERouteMapping;
 
   int initRoute();
   bool loadPLcVar();
