@@ -397,46 +397,46 @@ bool RosAds_server_node::loadPLcVar()
       string type =currentNode->FirstChildElement( "Type" )->GetText();
       VariableMapping[name] = type;
       do{
-	if(type == "BOOL"){
-		AdsVariable<bool> *var = new AdsVariable<bool>(*m_route, name);
-		BOOLRouteMapping[name] = var;
-	}
-	if(type == "BYTE"){
-		AdsVariable<uint8_t> *var = new AdsVariable<uint8_t>(*m_route, name);
-		BYTERouteMapping[name] = var;
-	}
-	if(type == "WORD" || type == "UINT"){
-		AdsVariable<uint16_t> *var = new AdsVariable<uint16_t>(*m_route, name);
-		USINTRouteMapping[name] = var;
-	}
-	if(type == "INT"){
-		AdsVariable<int16_t> *var = new AdsVariable<int16_t>(*m_route, name);
-		SINTRouteMapping[name] = var;
-	}
-	if(type == "DWORD" || type == "UDINT" || type == "DATE" || type == "TIME" || type == "TIME_OF_DAY" || type == "LTIME"){
-		AdsVariable<uint32_t> *var = new AdsVariable<uint32_t>(*m_route, name);
-		UINTRouteMapping[name] = var;
-	}
-	if(type == "DINT"){
-		AdsVariable<int32_t> *var = new AdsVariable<int32_t>(*m_route, name);
-		INTRouteMapping[name] = var;
-	}
-	if(type == "LWORD" || type == "ULINT"){
-		AdsVariable<uint64_t> *var = new AdsVariable<uint64_t>(*m_route, name);
-		ULONGRouteMapping[name] = var;
-	}
-	if(type == "LINT"){
-		AdsVariable<int64_t> *var = new AdsVariable<int64_t>(*m_route, name);
-		LONGRouteMapping[name] = var;
-	}
-	if(type == "REAL"){
-		AdsVariable<float> *var = new AdsVariable<float>(*m_route, name);
-		FLOATRouteMapping[name] = var;
-	}
-	if(type == "LREAL"){
-		AdsVariable<double> *var = new AdsVariable<double>(*m_route, name);
-		DOUBLERouteMapping[name] = var;
-	}
+	    if(type == "BOOL"){
+		    AdsVariable<bool> *var = new AdsVariable<bool>(*m_route, name);
+		    BOOLRouteMapping[name] = var;
+	    }
+	    if(type == "BYTE"){
+		    AdsVariable<uint8_t> *var = new AdsVariable<uint8_t>(*m_route, name);
+		    BYTERouteMapping[name] = var;
+	    }
+	    if(type == "WORD" || type == "UINT"){
+		    AdsVariable<uint16_t> *var = new AdsVariable<uint16_t>(*m_route, name);
+		    USINTRouteMapping[name] = var;
+	    }
+	    if(type == "INT"){
+		    AdsVariable<int16_t> *var = new AdsVariable<int16_t>(*m_route, name);
+		    SINTRouteMapping[name] = var;
+	    }
+	    if(type == "DWORD" || type == "UDINT" || type == "DATE" || type == "TIME" || type == "TIME_OF_DAY" || type == "LTIME"){
+		    AdsVariable<uint32_t> *var = new AdsVariable<uint32_t>(*m_route, name);
+		    UINTRouteMapping[name] = var;
+	    }
+	    if(type == "DINT"){
+		    AdsVariable<int32_t> *var = new AdsVariable<int32_t>(*m_route, name);
+		    INTRouteMapping[name] = var;
+	    }
+	    if(type == "LWORD" || type == "ULINT"){
+		    AdsVariable<uint64_t> *var = new AdsVariable<uint64_t>(*m_route, name);
+		    ULONGRouteMapping[name] = var;
+	    }
+	    if(type == "LINT"){
+		    AdsVariable<int64_t> *var = new AdsVariable<int64_t>(*m_route, name);
+		    LONGRouteMapping[name] = var;
+	    }
+	    if(type == "REAL"){
+		    AdsVariable<float> *var = new AdsVariable<float>(*m_route, name);
+		    FLOATRouteMapping[name] = var;
+	    }
+	    if(type == "LREAL"){
+		    AdsVariable<double> *var = new AdsVariable<double>(*m_route, name);
+		    DOUBLERouteMapping[name] = var;
+	    }
       }while(false);
     }
     bresult = true;
