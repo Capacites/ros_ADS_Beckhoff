@@ -1,4 +1,3 @@
-
 #include "RosAds_server_node.h"
 using namespace std;
 
@@ -436,46 +435,46 @@ bool RosAds_server_node::loadPLcVar()
       string type =currentNode->FirstChildElement( "Type" )->GetText();
       VariableMapping[name] = type;
       do{
-	if(type == "BOOL"){
-		BOOLRouteMapping[name] = new AdsVariable<bool>(*m_route, name);
-		break;
-	}
-	if(type == "BYTE"){
-		BYTERouteMapping[name] = new AdsVariable<uint8_t>(*m_route, name);
-		break;
-	}
-	if(type == "WORD" || type == "UINT"){
-		USINTRouteMapping[name] = new AdsVariable<uint16_t>(*m_route, name);
-		break;
-	}
-	if(type == "INT"){
-		SINTRouteMapping[name] = new AdsVariable<int16_t>(*m_route, name);
-		break;
-	}
-	if(type == "DWORD" || type == "UDINT" || type == "DATE" || type == "TIME" || type == "TIME_OF_DAY" || type == "LTIME"){
-		UINTRouteMapping[name] = new AdsVariable<uint32_t>(*m_route, name);
-		break;
-	}
-	if(type == "DINT"){
-		INTRouteMapping[name] = new AdsVariable<int32_t>(*m_route, name);
-		break;
-	}
-	if(type == "LWORD" || type == "ULINT"){
-		ULONGRouteMapping[name] = new AdsVariable<uint64_t>(*m_route, name);
-		break;
-	}
-	if(type == "LINT"){
-		LONGRouteMapping[name] = new AdsVariable<int64_t>(*m_route, name);
-		break;
-	}
-	if(type == "REAL"){
-		FLOATRouteMapping[name] = new AdsVariable<float>(*m_route, name);
-		break;
-	}
-	if(type == "LREAL"){
-		DOUBLERouteMapping[name] = new AdsVariable<double>(*m_route, name);
-		break;
-	}
+	    if(type == "BOOL"){
+		    BOOLRouteMapping[name] = new AdsVariable<bool>(*m_route, name);
+		    break;
+	    }
+	    if(type == "BYTE"){
+		    BYTERouteMapping[name] = new AdsVariable<uint8_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "WORD" || type == "UINT"){
+		    USINTRouteMapping[name] = new AdsVariable<uint16_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "INT"){
+		    SINTRouteMapping[name] = new AdsVariable<int16_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "DWORD" || type == "UDINT" || type == "DATE" || type == "TIME" || type == "TIME_OF_DAY" || type == "LTIME"){
+		    UINTRouteMapping[name] = new AdsVariable<uint32_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "DINT"){
+		    INTRouteMapping[name] = new AdsVariable<int32_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "LWORD" || type == "ULINT"){
+		    ULONGRouteMapping[name] = new AdsVariable<uint64_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "LINT"){
+		    LONGRouteMapping[name] = new AdsVariable<int64_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "REAL"){
+		    FLOATRouteMapping[name] = new AdsVariable<float>(*m_route, name);
+		    break;
+	    }
+	    if(type == "LREAL"){
+		    DOUBLERouteMapping[name] = new AdsVariable<double>(*m_route, name);
+		    break;
+	    }
       }while(false);
     }
     bresult = true;
