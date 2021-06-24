@@ -154,6 +154,7 @@ add_library(libAdsLib lib/AdsLib/AdsDef.cpp
 ## The recommended prefix ensures that target names across packages don't collide
  #add_executable(example src/example.cpp)
  add_executable(RosAds_server src/RosAds_server_node.cpp)
+ add_executable(Client_test test/Client_test_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -163,6 +164,7 @@ add_library(libAdsLib lib/AdsLib/AdsDef.cpp
 ## Add cmake target dependencies of the executable
 ## same as for the library above
  #add_dependencies(example ${PROJECT_NAME}_gencpp)
+ add_dependencies(Client_test ${PROJECT_NAME}_gencpp)
  add_dependencies(RosAds_server ${PROJECT_NAME}_gencpp libAdsLib)
 set_property(TARGET RosAds_server PROPERTY CXX_STANDARD 11)  # 98, 11 or 14
 
@@ -171,6 +173,7 @@ set_property(TARGET RosAds_server PROPERTY CXX_STANDARD_REQUIRED ON)
  #target_link_libraries(RosAdsLib ${catkin_LIBRARIES})
  #target_link_libraries(example ${catkin_LIBRARIES} RosAdsLib)
  target_link_libraries(RosAds_server ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} libAdsLib -lpthread )
+ target_link_libraries(Client_test ${catkin_LIBRARIES})
 
 #############
 ## Install ##
