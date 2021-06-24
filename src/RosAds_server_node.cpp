@@ -342,7 +342,7 @@ do{
    if(varType == "SINT")
   {
     res.value = *SINTRouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(int8_t)res.value);
+    ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int8_t)res.value);
     break;
   }
   if(varType == "WORD" || varType == "UINT")
