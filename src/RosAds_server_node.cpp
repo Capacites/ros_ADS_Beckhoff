@@ -1,4 +1,3 @@
-
 #include "RosAds_server_node.h"
 using namespace std;
 
@@ -24,6 +23,7 @@ RosAds_server_node::~RosAds_server_node()
   { 
      delete it->second;
   }
+<<<<<<< HEAD
   for(std::map<string,AdsVariable<int8_t>*>::iterator it = SINTRouteMapping.begin(); it != SINTRouteMapping.end(); ++it)
   { 
      delete it->second;
@@ -41,6 +41,21 @@ RosAds_server_node::~RosAds_server_node()
      delete it->second;
   }
   for(std::map<string,AdsVariable<int32_t>*>::iterator it = DINTRouteMapping.begin(); it != DINTRouteMapping.end(); ++it)
+=======
+  for(std::map<string,AdsVariable<uint16_t>*>::iterator it = USINTRouteMapping.begin(); it != USINTRouteMapping.end(); ++it)
+  { 
+     delete it->second;
+  }
+  for(std::map<string,AdsVariable<int16_t>*>::iterator it = SINTRouteMapping.begin(); it != SINTRouteMapping.end(); ++it)
+  { 
+     delete it->second;
+  }
+  for(std::map<string,AdsVariable<uint32_t>*>::iterator it = UINTRouteMapping.begin(); it != UINTRouteMapping.end(); ++it)
+  { 
+     delete it->second;
+  }
+  for(std::map<string,AdsVariable<int32_t>*>::iterator it = INTRouteMapping.begin(); it != INTRouteMapping.end(); ++it)
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
   { 
      delete it->second;
   }
@@ -150,7 +165,11 @@ do
     {
       if((uint16_t)req.value == req.value)
       {
+<<<<<<< HEAD
         *UINTRouteMapping[req.varName] = (uint16_t)req.value;
+=======
+        *USINTRouteMapping[req.varName] = (uint16_t)req.value;
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
         ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)req.value);
       }
       else
@@ -164,7 +183,11 @@ do
     {
       if((int16_t)req.value == req.value)
       {
+<<<<<<< HEAD
         *INTRouteMapping[req.varName] = (int16_t)req.value;
+=======
+        *SINTRouteMapping[req.varName] = (int16_t)req.value;
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
         ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int16_t)req.value);
       }
       else
@@ -178,7 +201,11 @@ do
     {
       if((uint32_t)req.value == req.value)
       {
+<<<<<<< HEAD
         *UDINTRouteMapping[req.varName] = (uint32_t)req.value;
+=======
+        *UINTRouteMapping[req.varName] = (uint32_t)req.value;
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
         ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)req.value);
       }else
       {
@@ -192,7 +219,11 @@ do
     {
       if((int32_t)req.value == req.value)
       {
+<<<<<<< HEAD
         *DINTRouteMapping[req.varName] = (int32_t)req.value;
+=======
+        *INTRouteMapping[req.varName] = (int32_t)req.value;
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
         ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int32_t)req.value);
       }
       else
@@ -254,7 +285,11 @@ do
     {
       if((uint32_t)req.value == req.value)
       {
+<<<<<<< HEAD
         *UDINTRouteMapping[req.varName] = (uint32_t)req.value;
+=======
+        *UINTRouteMapping[req.varName] = (uint32_t)req.value;
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
         ros::Time currentDate((uint32_t)req.value);
         time_t tDate(currentDate.toSec());
         tm tmDate;
@@ -281,10 +316,17 @@ do
       {
         if(varType == "TIME" || varType == "TIME_OF_DAY")
         {
+<<<<<<< HEAD
         	*UDINTRouteMapping[req.varName] = (uint32_t)req.value;
         }else if(varType == "LTIME")
         {
         	*UDINTRouteMapping[req.varName] = (uint32_t)(req.value * 1000000);
+=======
+        	*UINTRouteMapping[req.varName] = (uint32_t)req.value;
+        }else if(varType == "LTIME")
+        {
+        	*UINTRouteMapping[req.varName] = (uint32_t)(req.value * 1000000);
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
         }
         long lTime = (long)(req.value);
         long lMs = lTime % 1000;
@@ -348,28 +390,44 @@ do{
   }
   if(varType == "WORD" || varType == "UINT")
   {
+<<<<<<< HEAD
     res.value = *UINTRouteMapping[req.varName];
+=======
+    res.value = *USINTRouteMapping[req.varName];
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
     ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)res.value);
     break;
   }
 
   if(varType == "INT")
   {
+<<<<<<< HEAD
     res.value = *INTRouteMapping[req.varName];
+=======
+    res.value = *SINTRouteMapping[req.varName];
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
     ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int16_t)res.value);
     break;
   }
 
   if(varType == "DWORD" || varType == "UDINT")
   {
+<<<<<<< HEAD
     res.value = *UDINTRouteMapping[req.varName];
+=======
+    res.value = *UINTRouteMapping[req.varName];
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
     ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)res.value);
     break;
   }
 
   if(varType == "DINT")
   {
+<<<<<<< HEAD
     res.value = *DINTRouteMapping[req.varName];
+=======
+    res.value = *INTRouteMapping[req.varName];
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
     ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int32_t)res.value);
     break;
   }
@@ -404,8 +462,13 @@ do{
 
   if(varType == "DATE")
   {
+<<<<<<< HEAD
     res.value = *UDINTRouteMapping[req.varName];
     ros::Time currentDate(*UDINTRouteMapping[req.varName]);
+=======
+    res.value = *UINTRouteMapping[req.varName];
+    ros::Time currentDate(*UINTRouteMapping[req.varName]);
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
     time_t tDate(currentDate.toSec());
     tm tmDate;
     gmtime_r(&tDate,&tmDate);
@@ -422,8 +485,13 @@ do{
 
   if(varType == "TIME" || varType == "TIME_OF_DAY" || varType == "LTIME")
   {
+<<<<<<< HEAD
     res.value = *UDINTRouteMapping[req.varName];
     long lTime = (long)(*UDINTRouteMapping[req.varName]);
+=======
+    res.value = *UINTRouteMapping[req.varName];
+    long lTime = (long)(*UINTRouteMapping[req.varName]);
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
     long lMs = lTime % 1000;
     long lSec = (lTime/1000) % 60;
     long lMin = (lTime/60000) % 60;
@@ -458,6 +526,7 @@ bool RosAds_server_node::loadPLcVar()
       string type =currentNode->FirstChildElement( "Type" )->GetText();
       VariableMapping[name] = type;
       do{
+<<<<<<< HEAD
 	if(type == "BOOL"){
 		BOOLRouteMapping[name] = new AdsVariable<bool>(*m_route, name);
 		break;
@@ -502,6 +571,48 @@ bool RosAds_server_node::loadPLcVar()
 		DOUBLERouteMapping[name] = new AdsVariable<double>(*m_route, name);
 		break;
 	}
+=======
+	    if(type == "BOOL"){
+		    BOOLRouteMapping[name] = new AdsVariable<bool>(*m_route, name);
+		    break;
+	    }
+	    if(type == "BYTE"){
+		    BYTERouteMapping[name] = new AdsVariable<uint8_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "WORD" || type == "UINT"){
+		    USINTRouteMapping[name] = new AdsVariable<uint16_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "INT"){
+		    SINTRouteMapping[name] = new AdsVariable<int16_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "DWORD" || type == "UDINT" || type == "DATE" || type == "TIME" || type == "TIME_OF_DAY" || type == "LTIME"){
+		    UINTRouteMapping[name] = new AdsVariable<uint32_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "DINT"){
+		    INTRouteMapping[name] = new AdsVariable<int32_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "LWORD" || type == "ULINT"){
+		    ULONGRouteMapping[name] = new AdsVariable<uint64_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "LINT"){
+		    LONGRouteMapping[name] = new AdsVariable<int64_t>(*m_route, name);
+		    break;
+	    }
+	    if(type == "REAL"){
+		    FLOATRouteMapping[name] = new AdsVariable<float>(*m_route, name);
+		    break;
+	    }
+	    if(type == "LREAL"){
+		    DOUBLERouteMapping[name] = new AdsVariable<double>(*m_route, name);
+		    break;
+	    }
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
       }while(false);
     }
     bresult = true;
@@ -588,6 +699,10 @@ int RosAds_server_node::main(int argc, char **argv)
 
   if(nprive.hasParam("PLCPathFile"))
   {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3de1c18b6beae2848d1701a844f496047c57602b
     nprive.getParam("PLCPathFile", m_PLCFileDefinitionPath);
   }
   else {
