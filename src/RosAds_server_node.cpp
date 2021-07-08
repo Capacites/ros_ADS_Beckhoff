@@ -308,8 +308,6 @@ do
 
 bool RosAds_server_node::adsReadValue(beckhoff_plc_control::ADSReadValue::Request  &req, beckhoff_plc_control::ADSReadValue::Response &res)
 {
-
-
   bool bresult =  true;;
 
   string varType = checkVariable(req.varName);
