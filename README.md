@@ -16,7 +16,7 @@ Télécharger ce package ROS et l'ajouter dans votre répertoire `catkin_ws/src/
 **Utiliser le package**
 
 - Créer une route vers votre système ROS dans l'automate (voir tutoriel "Add_PLC_route.png")
-- - Fournir le fichier de configuration de votre programme automate :
+- Fournir le fichier de configuration de votre programme automate :
   - Copier le fichier _.tpy_ généré à la compilation de votre programme automate, situé sous `your_TwinCAT_solution/your_project/your_plc/your_file.tpy`
   - Le coller dans votre package
 
