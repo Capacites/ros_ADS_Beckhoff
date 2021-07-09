@@ -316,8 +316,8 @@ bool RosAds_server_node::adsReadValue(beckhoff_plc_control::ADSReadValue::Reques
     ROS_ERROR("Variable name not correct");
     bresult = false;
     }
+m_ComMutex.lock();
 do{
-    m_ComMutex.lock();
   if(varType == "BOOL")
   {
     res.value = *BOOLRouteMapping[req.varName];
@@ -429,12 +429,12 @@ do{
     break;
   }
 
-  m_ComMutex.unlock();
   ROS_ERROR("Variable type not correct");
   bresult = false;
   break;
   }
   while(false);
+  m_ComMutex.unlock();
 
   return bresult;
 }
