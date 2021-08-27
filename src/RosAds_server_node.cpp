@@ -101,12 +101,21 @@ do
     {
       if((uint8_t)req.value == req.value)
       {
-        if((uint8_t)req.value == 0){
-          *BOOLRouteMapping[req.varName] = false;
-          ROS_INFO("The %s %s now equals false",varType.c_str(),req.varName.c_str());
-        }else{
-          *BOOLRouteMapping[req.varName] = true;
-          ROS_INFO("The %s %s now equals true",varType.c_str(),req.varName.c_str());
+        try
+        {
+          if((uint8_t)req.value == 0){
+            *BOOLRouteMapping[req.varName] = false;
+            ROS_INFO("The %s %s now equals false",varType.c_str(),req.varName.c_str());
+          }else{
+            *BOOLRouteMapping[req.varName] = true;
+            ROS_INFO("The %s %s now equals true",varType.c_str(),req.varName.c_str());
+          }
+        }
+        catch(AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete BOOLRouteMapping[req.varName];
+          BOOLRouteMapping[req.varName] = new AdsVariable<bool>(*m_route, req.varName);
         }
       }
       else
@@ -121,8 +130,17 @@ do
     {
       if((uint8_t)req.value == req.value)
       {
-        *BYTERouteMapping[req.varName] = (uint8_t)req.value;
-        ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint8_t)req.value);
+        try
+        {
+          *BYTERouteMapping[req.varName] = (uint8_t)req.value;
+          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint8_t)req.value);
+        }
+        catch(AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete BYTERouteMapping[req.varName];
+          BYTERouteMapping[req.varName] = new AdsVariable<uint8_t>(*m_route, req.varName);
+        }
       }
       else
       {
@@ -135,8 +153,17 @@ do
     {
       if((int8_t)req.value == req.value)
       {
-        *SINTRouteMapping[req.varName] = (int8_t)req.value;
-        ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int8_t)req.value);
+        try
+        {
+          *SINTRouteMapping[req.varName] = (int8_t)req.value;
+          ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int8_t)req.value);
+        }
+        catch(AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete SINTRouteMapping[req.varName];
+          SINTRouteMapping[req.varName] = new AdsVariable<int8_t>(*m_route, req.varName);
+        }
       }
       else
       {
@@ -149,8 +176,17 @@ do
     {
       if((uint16_t)req.value == req.value)
       {
-        *UINTRouteMapping[req.varName] = (uint16_t)req.value;
-        ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)req.value);
+        try
+        {
+          *UINTRouteMapping[req.varName] = (uint16_t)req.value;
+          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)req.value);
+        }
+        catch(AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete UINTRouteMapping[req.varName];
+          UINTRouteMapping[req.varName] = new AdsVariable<uint16_t>(*m_route, req.varName);
+        }
       }
       else
       {
@@ -163,8 +199,17 @@ do
     {
       if((int16_t)req.value == req.value)
       {
+        try
+        {
         *INTRouteMapping[req.varName] = (int16_t)req.value;
         ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int16_t)req.value);
+        }
+        catch(AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete INTRouteMapping[req.varName];
+          INTRouteMapping[req.varName] = new AdsVariable<int16_t>(*m_route, req.varName);
+        }
       }
       else
       {
@@ -177,8 +222,18 @@ do
     {
       if((uint32_t)req.value == req.value)
       {
-        *UDINTRouteMapping[req.varName] = (uint32_t)req.value;
-        ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)req.value);
+        try
+        {
+          *UDINTRouteMapping[req.varName] = (uint32_t)req.value;
+          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)req.value);
+        }
+        catch(AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete UDINTRouteMapping[req.varName];
+          UDINTRouteMapping[req.varName] = new AdsVariable<uint32_t>(*m_route, req.varName);
+
+        }
       }else
       {
         dataCorrect = false;
@@ -191,8 +246,17 @@ do
     {
       if((int32_t)req.value == req.value)
       {
-        *DINTRouteMapping[req.varName] = (int32_t)req.value;
-        ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int32_t)req.value);
+        try
+        {
+          *DINTRouteMapping[req.varName] = (int32_t)req.value;
+          ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int32_t)req.value);
+        }
+        catch (AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete DINTRouteMapping[req.varName];
+          DINTRouteMapping[req.varName] = new AdsVariable<int32_t>(*m_route, req.varName);
+        }
       }
       else
       {
@@ -205,8 +269,17 @@ do
     {
       if((uint64_t)req.value == req.value)
       {
-        *ULONGRouteMapping[req.varName] = (uint64_t)req.value;
-        ROS_INFO("The %s %s now equals %lu",varType.c_str(),req.varName.c_str(),(uint64_t)req.value);
+        try
+        {
+          *ULONGRouteMapping[req.varName] = (uint64_t)req.value;
+          ROS_INFO("The %s %s now equals %lu",varType.c_str(),req.varName.c_str(),(uint64_t)req.value);
+        }
+        catch(AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete ULONGRouteMapping[req.varName];
+          ULONGRouteMapping[req.varName] = new AdsVariable<uint64_t>(*m_route, req.varName);
+        }
       }
       else
       {
@@ -218,8 +291,17 @@ do
     if(varType == "LINT")
     {
       if((int64_t)req.value == req.value){
-        *LONGRouteMapping[req.varName] = (int64_t)req.value;
-        ROS_INFO("The %s %s now equals %ld",varType.c_str(),req.varName.c_str(),int64_t(req.value));
+        try
+        {
+          *LONGRouteMapping[req.varName] = (int64_t)req.value;
+          ROS_INFO("The %s %s now equals %ld",varType.c_str(),req.varName.c_str(),int64_t(req.value));
+        }
+        catch(AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete LONGRouteMapping[req.varName];
+          LONGRouteMapping[req.varName] = new AdsVariable<int64_t>(*m_route, req.varName);
+        }
       }
       else
       {
@@ -230,17 +312,35 @@ do
 
     if(varType == "REAL")
     {
+      try {
 
         *FLOATRouteMapping[req.varName] = (float)req.value;
         ROS_INFO("The %s %s now equals %f",varType.c_str(),req.varName.c_str(),(float)req.value);
+      }
+      catch(AdsException e)
+      {
+        ROS_ERROR_STREAM(e.what());
+        delete FLOATRouteMapping[req.varName];
+        FLOATRouteMapping[req.varName] = new AdsVariable<float>(*m_route, req.varName);
+      }
 
       break;
     }
 
     if(varType == "LREAL")
     {
-      *DOUBLERouteMapping[req.varName] = req.value;
-      ROS_INFO("The %s %s now equals %lf",varType.c_str(),req.varName.c_str(),req.value);
+      try
+      {
+
+        *DOUBLERouteMapping[req.varName] = req.value;
+        ROS_INFO("The %s %s now equals %lf",varType.c_str(),req.varName.c_str(),req.value);
+      }
+      catch(AdsException e)
+      {
+        ROS_ERROR_STREAM(e.what());
+        delete DOUBLERouteMapping[req.varName];
+        DOUBLERouteMapping[req.varName] = new AdsVariable<double>(*m_route, req.varName);
+      }
       break;
     }
 
@@ -248,6 +348,8 @@ do
     {
       if((uint32_t)req.value == req.value)
       {
+        try
+         {
         *UDINTRouteMapping[req.varName] = (uint32_t)req.value;
         ros::Time currentDate((uint32_t)req.value);
         time_t tDate(currentDate.toSec());
@@ -261,6 +363,12 @@ do
                  tmDate.tm_hour,
                  tmDate.tm_min,
                  tmDate.tm_sec);
+        } catch (AdsException e)
+        {
+          ROS_ERROR_STREAM(e.what());
+          delete UDINTRouteMapping[req.varName];
+          UDINTRouteMapping[req.varName] = new AdsVariable<uint32_t>(*m_route, req.varName);
+        }
       }
       else
       {
@@ -273,20 +381,30 @@ do
     {
       if((uint32_t)req.value == req.value)
       {
-        if(varType == "TIME" || varType == "TIME_OF_DAY")
+        try
         {
-          *UDINTRouteMapping[req.varName] = (uint32_t)req.value;
-        }else if(varType == "LTIME")
+          if(varType == "TIME" || varType == "TIME_OF_DAY")
+          {
+            *UDINTRouteMapping[req.varName] = (uint32_t)req.value;
+            if(varType == "LTIME")
+            {
+              *UDINTRouteMapping[req.varName] = (uint32_t)(req.value * 1000000);
+            }
+            long lTime = (long)(req.value);
+            long lMs = lTime % 1000;
+            long lSec = (lTime/1000) % 60;
+            long lMin = (lTime/60000) % 60;
+            long lHeu = (lTime/3600000) % 24;
+            ROS_INFO("%s set to %luh%lum%lus%lums",req.varName.c_str(),lHeu,lMin,lSec,lMs);
+          }
+        }catch (AdsException e)
         {
-          *UDINTRouteMapping[req.varName] = (uint32_t)(req.value * 1000000);
+          ROS_ERROR_STREAM(e.what());
+          delete UDINTRouteMapping[req.varName];
+          UDINTRouteMapping[req.varName] = new AdsVariable<uint32_t>(*m_route, req.varName);
         }
-        long lTime = (long)(req.value);
-        long lMs = lTime % 1000;
-        long lSec = (lTime/1000) % 60;
-        long lMin = (lTime/60000) % 60;
-        long lHeu = (lTime/3600000) % 24;
-        ROS_INFO("%s set to %luh%lum%lus%lums",req.varName.c_str(),lHeu,lMin,lSec,lMs);
-      }else
+      }
+      else
       {
         dataCorrect = false;
       }
@@ -315,87 +433,185 @@ m_ComMutex.lock();
 do{
   if(varType == "BOOL")
   {
-    res.value = *BOOLRouteMapping[req.varName];
-    if(*BOOLRouteMapping[req.varName] == false)
+    try
     {
-      ROS_INFO("The %s %s equals false",varType.c_str(),req.varName.c_str());
+      res.value = *BOOLRouteMapping[req.varName];
+      if(*BOOLRouteMapping[req.varName] == false)
+      {
+        ROS_INFO("The %s %s equals false",varType.c_str(),req.varName.c_str());
+      }
+      else
+      {
+        ROS_INFO("The %s %s equals true",varType.c_str(),req.varName.c_str());
+      }
     }
-    else
+    catch(AdsException e)
     {
-      ROS_INFO("The %s %s equals true",varType.c_str(),req.varName.c_str());
+      ROS_ERROR_STREAM(e.what());
+      delete BOOLRouteMapping[req.varName];
+      BOOLRouteMapping[req.varName] = new AdsVariable<bool>(*m_route, req.varName);
     }
     break;
   }
   if(varType == "BYTE" || varType == "USINT")
   {
-    res.value = *BYTERouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint8_t)res.value);
+    try
+    {
+      res.value = *BYTERouteMapping[req.varName];
+      ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint8_t)res.value);
+    }
+    catch(AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete BYTERouteMapping[req.varName];
+      BYTERouteMapping[req.varName] = new AdsVariable<uint8_t>(*m_route, req.varName);
+    }
     break;
+
   }
    if(varType == "SINT")
   {
-    res.value = *SINTRouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int8_t)res.value);
-    break;
-  }
-  if(varType == "WORD" || varType == "UINT")
-  {
-    res.value = *UINTRouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)res.value);
-    break;
-  }
+     try
+     {
+       res.value = *SINTRouteMapping[req.varName];
+       ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int8_t)res.value);
+     }
+     catch(AdsException e)
+     {
+       delete SINTRouteMapping[req.varName];
+       SINTRouteMapping[req.varName] = new AdsVariable<int8_t>(*m_route, req.varName);
+     }
+     break;
+   }
+   if(varType == "WORD" || varType == "UINT")
+   {
+     try
+     {
+       res.value = *UINTRouteMapping[req.varName];
+       ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)res.value);
+     }
+     catch(AdsException e)
+     {
+       ROS_ERROR_STREAM(e.what());
+       delete UINTRouteMapping[req.varName];
+       UINTRouteMapping[req.varName] = new AdsVariable<uint16_t>(*m_route, req.varName);
+     }
+     break;
+   }
+
 
   if(varType == "INT")
   {
-    res.value = *INTRouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int16_t)res.value);
+    try
+    {
+      res.value = *INTRouteMapping[req.varName];
+      ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int16_t)res.value);
+    }
+    catch(AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete INTRouteMapping[req.varName];
+      INTRouteMapping[req.varName] = new AdsVariable<int16_t>(*m_route, req.varName);
+    }
     break;
   }
-
   if(varType == "DWORD" || varType == "UDINT")
   {
-    res.value = *UDINTRouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)res.value);
+    try
+    {
+      res.value = *UDINTRouteMapping[req.varName];
+      ROS_INFO("The %s %s equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)res.value);
+    }
+    catch(AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete UDINTRouteMapping[req.varName];
+      UDINTRouteMapping[req.varName] = new AdsVariable<uint32_t>(*m_route, req.varName);
+    }
     break;
   }
 
   if(varType == "DINT")
   {
-    res.value = *DINTRouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int32_t)res.value);
+    try {
+      res.value = *DINTRouteMapping[req.varName];
+      ROS_INFO("The %s %s equals %d",varType.c_str(),req.varName.c_str(),(int32_t)res.value);
+    }
+    catch (AdsException e)
+    {
+      delete DINTRouteMapping[req.varName];
+      DINTRouteMapping[req.varName] = new AdsVariable<int32_t>(*m_route, req.varName);
+    }
     break;
   }
 
   if(varType == "LWORD" || varType == "ULINT")
   {
-    res.value = *ULONGRouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %lu",varType.c_str(),req.varName.c_str(),(uint64_t)res.value);
+    try
+    {
+      res.value = *ULONGRouteMapping[req.varName];
+      ROS_INFO("The %s %s equals %lu",varType.c_str(),req.varName.c_str(),(uint64_t)res.value);
+    }
+    catch(AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete ULONGRouteMapping[req.varName];
+      ULONGRouteMapping[req.varName] = new AdsVariable<uint64_t>(*m_route, req.varName);
+    }
     break;
   }
 
   if(varType == "LINT")
   {
+    try
+    {
     res.value = *LONGRouteMapping[req.varName];
     ROS_INFO("The %s %s equals %ld",varType.c_str(),req.varName.c_str(),int64_t(res.value));
+    }
+    catch(AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete LONGRouteMapping[req.varName];
+      LONGRouteMapping[req.varName] = new AdsVariable<int64_t>(*m_route, req.varName);
+    }
     break;
   }
 
   if(varType == "REAL")
   {
-    res.value = *FLOATRouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %f",varType.c_str(),req.varName.c_str(),(float)res.value);
+    try
+    {
+      res.value = *FLOATRouteMapping[req.varName];
+      ROS_INFO("The %s %s equals %f",varType.c_str(),req.varName.c_str(),(float)res.value);
+    }
+    catch(AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete FLOATRouteMapping[req.varName];
+      FLOATRouteMapping[req.varName] = new AdsVariable<float>(*m_route, req.varName);
+    }
     break;
   }
 
   if(varType == "LREAL")
   {
-    res.value = *DOUBLERouteMapping[req.varName];
-    ROS_INFO("The %s %s equals %lf",varType.c_str(),req.varName.c_str(),res.value);
+    try {
+      res.value = *DOUBLERouteMapping[req.varName];
+      ROS_INFO("The %s %s equals %lf",varType.c_str(),req.varName.c_str(),res.value);
+    } catch (AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete DOUBLERouteMapping[req.varName];
+      DOUBLERouteMapping[req.varName] = new AdsVariable<double>(*m_route, req.varName);
+
+    }
     break;
   }
 
   if(varType == "DATE")
   {
+    try
+    {
     res.value = *UDINTRouteMapping[req.varName];
     ros::Time currentDate(*UDINTRouteMapping[req.varName]);
     time_t tDate(currentDate.toSec());
@@ -409,18 +625,34 @@ do{
              tmDate.tm_hour,
              tmDate.tm_min,
              tmDate.tm_sec);
+    } catch (AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete UDINTRouteMapping[req.varName];
+      UDINTRouteMapping[req.varName] = new AdsVariable<uint32_t>(*m_route, req.varName);
+
+    }
     break;
   }
 
   if(varType == "TIME" || varType == "TIME_OF_DAY" || varType == "LTIME")
   {
-    res.value = *UDINTRouteMapping[req.varName];
-    long lTime = (long)(*UDINTRouteMapping[req.varName]);
-    long lMs = lTime % 1000;
-    long lSec = (lTime/1000) % 60;
-    long lMin = (lTime/60000) % 60;
-    long lHeu = (lTime/3600000) % 24;
-    ROS_INFO("%s equals %luh%lum%lus%lums",req.varName.c_str(),lHeu,lMin,lSec,lMs);
+    try
+    {
+      res.value = *UDINTRouteMapping[req.varName];
+      long lTime = (long)(*UDINTRouteMapping[req.varName]);
+      long lMs = lTime % 1000;
+      long lSec = (lTime/1000) % 60;
+      long lMin = (lTime/60000) % 60;
+      long lHeu = (lTime/3600000) % 24;
+      ROS_INFO("%s equals %luh%lum%lus%lums",req.varName.c_str(),lHeu,lMin,lSec,lMs);
+    }
+    catch (AdsException e)
+    {
+      ROS_ERROR_STREAM(e.what());
+      delete UDINTRouteMapping[req.varName];
+      UDINTRouteMapping[req.varName] = new AdsVariable<uint32_t>(*m_route, req.varName);
+    }
     break;
   }
 
