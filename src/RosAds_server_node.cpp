@@ -857,28 +857,29 @@ int RosAds_server_node::main(int argc, char **argv)
   ROS_ERROR("Init Route done");
 
 
-try
-{
-  m_VariableADS = m_route->GetDeviceAdsVariables();
-
-  for(std::map<string,string>::iterator it = m_VariableADS.begin(); it != m_VariableADS.end(); ++it)
+  try
   {
-     ROS_INFO("%s\t%s",it->first.c_str(),it->second.c_str());
+    m_VariableADS = m_route->GetDeviceAdsVariables();
+
+    for(std::map<string,string>::iterator it = m_VariableADS.begin(); it != m_VariableADS.end(); ++it)
+    {
+      ROS_INFO("%s\t%s",it->first.c_str(),it->second.c_str());
+    }
+    bindPLcVar();
+
+    m_writingValueService = n.advertiseService("ADS_write_value", &RosAds_server_node::adsWriteValue,this);
+    m_readingValueService = n.advertiseService("ADS_read_value", &RosAds_server_node::adsReadValue,this);
+    m_readingVariablesService = n.advertiseService("ADS_read_variables", &RosAds_server_node::adsReadVariables,this);
+  
+    ROS_INFO("Ready to communicate with the remote PLC via ADS.");
   }
-  bindPLcVar();
-
-}
-catch(AdsException e)
-{
+  catch(AdsException e)
+  {
 	ROS_INFO_STREAM(e.what());
-}
-/*  loadPLcVar();
-  m_writingValueService = n.advertiseService("ADS_write_value", &RosAds_server_node::adsWriteValue,this);
-  m_readingValueService = n.advertiseService("ADS_read_value", &RosAds_server_node::adsReadValue,this);
-  m_readingVariablesService = n.advertiseService("ADS_read_variables", &RosAds_server_node::adsReadVariables,this);
-*/
-
-  ROS_INFO("Ready to communicate with the remote PLC via ADS.");
+	
+	ROS_INFO("ERROR in mapping alias with ADS.");
+  }
+  
   ros::spin();
 
   return 0;
