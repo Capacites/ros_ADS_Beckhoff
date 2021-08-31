@@ -5,6 +5,7 @@
 #include "beckhoff_plc_control/ADSReadVariables.h"
 #include <tinyxml.h>
 #include <cstdlib>
+#include "../lib/AdsLib/standalone/AdsDef.h"
 #include "../lib/AdsLib/AdsLib.h"
 #include "../lib/AdsLib/AdsVariable.h"
 #include <time.h>
@@ -28,6 +29,8 @@ private:
   ///Mutex utile pour la communication
   boost::mutex m_ComMutex;
 
+  std::map<string,string> m_VariableADS;
+
   std::map<string,string> VariableMapping;
   std::map<string,AdsVariable<bool>*> BOOLRouteMapping;
   std::map<string,AdsVariable<uint8_t>*> BYTERouteMapping;
@@ -42,7 +45,7 @@ private:
   std::map<string,AdsVariable<double>*> DOUBLERouteMapping;
 
   int initRoute();
-  bool loadPLcVar();
+  bool bindPLcVar();
 
   string checkVariable(string varName);
 public :

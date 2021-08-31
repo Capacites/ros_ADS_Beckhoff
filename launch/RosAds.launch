@@ -2,9 +2,9 @@
 
 <launch>
 	<node pkg="beckhoff_plc_control" type="RosAds_server" name="RosAds_server" output="screen">
-	    <param name="localNetId" type="str" value="{192, 168, 255, 101, 1, 1}"/>
-	    <param name="remoteNetId" type="str" value="5,94,101,200, 1, 1"/>
-	    <param name="remoteIpV4" type="str" value="192.168.255.10"/>
-	    <param name="PLCPathFile" type="str" value="config_file.tpy"/>
+	    <param name="localNetId" type="str" value="{192,168,255,6,1,1}"/>
+	    <param name="remoteNetId" type="str" value="172.31.1.200.1.1"/>
+	    <param name="remoteIpV4" type="str" value="192.168.255.2"/>
+	    <param name="PLCPathFile" type="str" value="$(find beckhoff_plc_control)/ADS_config.xml"/>
 	</node>
 </launch>
