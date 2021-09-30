@@ -32,7 +32,9 @@ private:
   std::map<string,string> m_VariableADS;
 
   std::map<string,string> VariableMapping;
-  std::map<string,AdsVariable<bool>*> BOOLRouteMapping;
+  
+  std::map<string,IAdsVariable*> RouteMapping;
+  /*std::map<string,AdsVariable<bool>*> BOOLRouteMapping;
   std::map<string,AdsVariable<uint8_t>*> BYTERouteMapping;
   std::map<string,AdsVariable<int8_t>*> SINTRouteMapping;
   std::map<string,AdsVariable<uint16_t>*> UINTRouteMapping;
@@ -42,7 +44,7 @@ private:
   std::map<string,AdsVariable<uint64_t>*> ULONGRouteMapping;
   std::map<string,AdsVariable<int64_t>*> LONGRouteMapping;
   std::map<string,AdsVariable<float>*> FLOATRouteMapping;
-  std::map<string,AdsVariable<double>*> DOUBLERouteMapping;
+  std::map<string,AdsVariable<double>*> DOUBLERouteMapping;*/
 
   int initRoute();
   bool bindPLcVar();
