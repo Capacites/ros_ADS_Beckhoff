@@ -1,0 +1,3 @@
+[submodule "ros_ads_node/lib/yaml-cpp"]
+	path = ros_ads_node/lib/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git

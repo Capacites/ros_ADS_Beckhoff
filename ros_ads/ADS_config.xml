@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<!-- Configuration de communication par ADS avec TwinCAT -->
-<Root>
-  <Variable><alias>qdw1</alias><ads_name>IHM_VAR.qdw1</ads_name></Variable>
-  <Variable><alias>qdw2</alias><ads_name>GVL_EFFECTEUR.Effort_Low</ads_name></Variable>
-  <Variable><alias>qdw3</alias><ads_name>IHM_VAR.qdw3</ads_name></Variable>
-  <Variable><alias>qdw4</alias><ads_name>IHM_VAR.qdw4</ads_name></Variable>
-
-</Root>

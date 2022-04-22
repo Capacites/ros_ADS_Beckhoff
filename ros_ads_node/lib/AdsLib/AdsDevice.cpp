@@ -66,7 +66,6 @@ std::map<string,string> AdsDevice::GetDeviceAdsVariables() const
     std::map<string,string>     lADSVariables;
 
 
-    ROS_INFO_STREAM("Read the length of the variable declaration");
     // Read the length of the variable declaration
     nErr = ReadReqEx2(ADSIGRP_SYM_UPLOADINFO, 0x0, sizeof(tAdsSymbolUploadInfo), &tAdsSymbolUploadInfo, &bytesRead);
     if(nErr != 0) {
@@ -74,14 +73,12 @@ std::map<string,string> AdsDevice::GetDeviceAdsVariables() const
     }
     pchSymbols = new char[tAdsSymbolUploadInfo.nSymSize];
 
-    ROS_INFO_STREAM("Read information about the PLC variables");
     // Read information about the PLC variables 
     nErr = ReadReqEx2(ADSIGRP_SYM_UPLOAD, 0x0, tAdsSymbolUploadInfo.nSymSize, pchSymbols, &bytesRead);
     if(nErr != 0) {
       throw AdsException(nErr);
     }
- 
-    ROS_INFO_STREAM("Output information about the PLC variables");
+
     //Output information about the PLC variables
     pAdsSymbolEntry = (PAdsSymbolEntry)pchSymbols;
     for (uiIndex = 0; uiIndex < tAdsSymbolUploadInfo.nSymbols; uiIndex++)
