@@ -3,7 +3,7 @@ project(ros_ads_node)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -54,7 +54,7 @@ add_library(libAdsLib lib/AdsLib/AdsDef.cpp
 add_executable(ros_ads_node src/Ads_Interface.cpp src/Ads_node.cpp)
 add_dependencies(ros_ads_node libAdsLib)
 add_dependencies(ros_ads_node ${catkin_EXPORTED_TARGETS})
-set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD 11)  # 98, 11 or 14
+set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD 17)
 set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(ros_ads_node ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} libAdsLib -lpthread )

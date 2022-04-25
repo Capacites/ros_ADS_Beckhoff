@@ -83,13 +83,6 @@ std::map<string,string> AdsDevice::GetDeviceAdsVariables() const
     pAdsSymbolEntry = (PAdsSymbolEntry)pchSymbols;
     for (uiIndex = 0; uiIndex < tAdsSymbolUploadInfo.nSymbols; uiIndex++)
     {
-          /*ROS_INFO_STREAM(PADSSYMBOLNAME(pAdsSymbolEntry) << "\t\t"
-            << pAdsSymbolEntry->iGroup << '\t'
-            << pAdsSymbolEntry->iOffs << '\t'
-            << pAdsSymbolEntry->size << '\t'
-            << PADSSYMBOLTYPE(pAdsSymbolEntry) << '\t'
-            << PADSSYMBOLCOMMENT(pAdsSymbolEntry) << '\n');*/
-
 	std::string nameVar(PADSSYMBOLNAME(pAdsSymbolEntry));
 	std::string typeVar(PADSSYMBOLTYPE(pAdsSymbolEntry));
 	lADSVariables[nameVar] = typeVar;
