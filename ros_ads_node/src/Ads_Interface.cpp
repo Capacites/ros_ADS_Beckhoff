@@ -2,8 +2,6 @@
 
 using namespace std;
 
-TiXmlDocument doc;
-
 RosAds_Interface::~RosAds_Interface()
 {
   m_ComMutex.lock();
@@ -28,11 +26,11 @@ RosAds_Interface::RosAds_Interface()
 
 int RosAds_Interface::checkVariable(string varName){
   int varType = -1;
-    std::map<string,int>::iterator it;
+    std::map<string,std::pair<int, std::string>>::iterator it;
      it= m_VariableMapping.find(varName);
   if(it != m_VariableMapping.end())
   {
-    varType = it->second;
+    varType = it->second.first;
   }
   return varType;
 }
@@ -52,11 +50,11 @@ bool RosAds_Interface::adsWriteValue(std::string name, std::variant<bool, uint8_
     dataCorrect =  false;
     bresult =  false;
   }
-  else if (m_VariableMapping[name] == varType)
+  else if (m_VariableMapping[name].first == varType)
   {
     try
     {
-      switch(m_VariableMapping[name])
+      switch(m_VariableMapping[name].first)
       {
       case BOOL:
       {
@@ -130,6 +128,7 @@ bool RosAds_Interface::adsWriteValue(std::string name, std::variant<bool, uint8_
 std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> RosAds_Interface::adsReadValue(std::string name)
 {
   std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> result;
+
   if(m_RouteMapping.find(name) != m_RouteMapping.end())
   {
       try
@@ -138,7 +137,7 @@ std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_
         m_RouteMapping[name]->ReadValue(m_temp);
         m_ComMutex.unlock();
         //ROS_INFO("The %s %s equals %f",varType.c_str(),name.c_str(), res.varValues[0]);
-        switch(m_VariableMapping[name])
+        switch(m_VariableMapping[name].first)
         {
         case BOOL:
         {
@@ -184,6 +183,10 @@ std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_
         {
             result = (uint32_t)m_temp;
         }
+        default:
+        {
+
+        }
       }
       }
       catch(AdsException e)
@@ -195,20 +198,19 @@ std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_
   return result;
 }
 
-bool RosAds_Interface::bindPLcVar()
+bool RosAds_Interface::bindPLcVar(std::string file, std::string name)
 {
   bool bresult = false;
-
-  if (doc.LoadFile(m_PLCFileDefinitionPath.c_str()))
+  YAML::Node config = YAML::LoadFile(file);
+  if (config[name])
   {
     //ROS_INFO("Reading your PLC config file ...");
-    TiXmlNode* firstNode = doc.FirstChildElement( "Root" )->FirstChildElement( "Variable" );
 
     //Read each alias with corresponding ADS name
-    for(TiXmlNode* currentNode = firstNode ; currentNode ; currentNode = currentNode->NextSiblingElement())
+    for(YAML::const_iterator element=config[name]["variables"].begin();element!=config[name]["variables"].end();++element)
     {
-      string alias = currentNode->FirstChildElement( "alias" )->GetText();
-      string adsName =currentNode->FirstChildElement( "ads_name" )->GetText(); 
+      string alias = element->first.as<std::string>();
+      string adsName = element->second.as<std::string>();
 
       //Check if ADS name is part of downloaded PLC ADS list
       if ( m_VariableADS.find(adsName) == m_VariableADS.end() )
@@ -220,67 +222,59 @@ bool RosAds_Interface::bindPLcVar()
       //ROS_INFO("ADS alias found: %s -> %s",alias.c_str(),adsName.c_str());
 
       string type = m_VariableADS[adsName];
-      m_VariableMapping[alias] = convert_type_from_string(type);
-      do{
-        if(type == "BOOL")
-        {
+      m_VariableMapping[alias] = std::pair<int, std::string>(convert_type_from_string(type), type);
+
+      switch(m_VariableMapping[name].first)
+      {
+      case BOOL:
+      {
           m_RouteMapping[alias] = new AdsVariable<bool>(*m_route, adsName);
-          break;
-        }
-        if(type == "BYTE" || type == "USINT")
-        {
-          m_RouteMapping[alias] = new AdsVariable<uint8_t>(*m_route, adsName);
-          break;
-        }
-        if(type == "SINT")
-        {
-          m_RouteMapping[alias] = new AdsVariable<int8_t>(*m_route, adsName);
-          break;
-        }
-        if(type == "WORD" || type == "UINT")
-        {
-          m_RouteMapping[alias] = new AdsVariable<uint16_t>(*m_route, adsName);
-          break;
-        }
-        if(type == "INT")
-        {
-          m_RouteMapping[alias] = new AdsVariable<int16_t>(*m_route, adsName);
-          break;
-        }
-        if(type == "DWORD" || type == "UDINT" || type == "DATE" || type == "TIME" || type == "TIME_OF_DAY" || type == "LTIME")
-        {
-          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, adsName);
-          break;
-        }
-        if(type == "DINT")
-        {
-          m_RouteMapping[alias] = new AdsVariable<int32_t>(*m_route, adsName);
-          break;
-        }
-        if(type == "LWORD" || type == "ULINT")
-        {
-          m_RouteMapping[alias] = new AdsVariable<uint64_t>(*m_route, adsName);
-          break;
-        }
-        if(type == "LINT")
-        {
-          m_RouteMapping[alias] = new AdsVariable<int64_t>(*m_route, adsName);
-          break;
-        }
-        if(type == "REAL")
-        {
-          m_RouteMapping[alias] = new AdsVariable<float>(*m_route, adsName);
-          break;
-        }
-        if(type == "LREAL")
-        {
-          m_RouteMapping[alias] = new AdsVariable<double>(*m_route, adsName);
-
-
-          break;
-        }
       }
-      while(false);
+      case UINT8_T:
+      {
+          m_RouteMapping[alias] = new AdsVariable<uint8_t>(*m_route, adsName);
+      }
+      case INT8_T:
+      {
+          m_RouteMapping[alias] = new AdsVariable<int8_t>(*m_route, adsName);
+      }
+      case UINT16_T:
+      {
+          m_RouteMapping[alias] = new AdsVariable<uint16_t>(*m_route, adsName);
+      }
+      case INT16_T:
+      {
+          m_RouteMapping[alias] = new AdsVariable<int16_t>(*m_route, adsName);
+      }
+      case UINT32_T:
+      {
+          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, adsName);
+      }
+      case INT32_T:
+      {
+          m_RouteMapping[alias] = new AdsVariable<int32_t>(*m_route, adsName);
+      }
+      case INT64_T:
+      {
+          m_RouteMapping[alias] = new AdsVariable<int64_t>(*m_route, adsName);
+      }
+      case FLOAT:
+      {
+          m_RouteMapping[alias] = new AdsVariable<float>(*m_route, adsName);
+      }
+      case DOUBLE:
+      {
+          m_RouteMapping[alias] = new AdsVariable<double>(*m_route, adsName);
+      }
+      case DATE:
+      {
+          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, adsName);
+      }
+      default:
+      {
+
+      }
+      }
     }
     bresult = true;
   }
@@ -288,7 +282,6 @@ bool RosAds_Interface::bindPLcVar()
   {
     //ROS_INFO("Failed to load the PLC config file");
   }
-
     return bresult;
 }
 
@@ -303,8 +296,6 @@ std::vector<std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int
 
   return result;
 }
-
-//------------------ Creating route to remote PLC --------------------
 
 int RosAds_Interface::initRoute()
 {

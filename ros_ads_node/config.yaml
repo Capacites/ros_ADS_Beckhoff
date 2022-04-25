@@ -1,0 +1,19 @@
+test_device:
+
+  IP: 172.21.176.50
+  NetID: 172.18.236.170.1.1
+  
+  publish_rate: 10 #Hz 
+  state_rate: 1 #Hz 
+      
+  publish_on_timer: 
+    - di_in_test1
+    - di_in_test2
+    - di_out_test1
+  
+  publish_on_event:
+    - di_in_test1
+  
+  variables:
+    test1: alias1
+    test2: alias2

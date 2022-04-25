@@ -5,7 +5,7 @@ std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uin
 {
     std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>> result;
     std::string name;
-    int type;
+    std::string type;
     double value;
     bool cresult;
     std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> converted_value;
@@ -18,63 +18,63 @@ std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uin
         name = msg.varNames[index];
         type = msg.varTypes[index];
         value = msg.varValues[index];
-        switch (type)
+        do
         {
-            case BOOL:
+            if(type == "BOOL")
             {
                 converted_value = static_cast<bool>(value);
                 cresult = true;
             }
-            case UINT8_T:
+            if(type == "BYTE" || type == "USINT")
             {
                 converted_value = static_cast<uint8_t>(value);
                 cresult = true;
             }
-            case INT8_T:
+            if(type == "SINT")
             {
                 converted_value = static_cast<int8_t>(value);
                 cresult = true;
             }
-            case UINT16_T:
+            if(type == "WORD" || type == "UINT")
             {
                 converted_value = static_cast<uint16_t>(value);
                 cresult = true;
             }
-            case INT16_T:
+            if(type == "INT")
             {
                 converted_value = static_cast<int16_t>(value);
                 cresult = true;
             }
-            case UINT32_T:
+            if(type == "DWORD" || type == "UDINT")
             {
                 converted_value = static_cast<uint32_t>(value);
                 cresult = true;
             }
-            case INT32_T:
+            if(type == "DINT")
             {
                 converted_value = static_cast<int32_t>(value);
                 cresult = true;
                 break;
             }
-            case INT64_T:
+            if(type == "LINT")
             {
                 converted_value = static_cast<int64_t>(value);
                 cresult = true;
                 break;
             }
-            case FLOAT:
+            if(type == "REAL")
             {
                 converted_value = static_cast<float>(value);
                 cresult = true;
                 break;
             }
-            case DOUBLE:
+            if(type == "LREAL")
             {
                 converted_value = static_cast<double>(value);
                 cresult = true;
                 break;
             }
-            case DATE:
+            if(type == "DATE")
             {
                 auto temp = static_cast<uint32_t>(value);
                 ros::Time currentDate(temp);
@@ -85,11 +85,8 @@ std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uin
                 cresult = true;
                 break;
             }
-            default:
-            {
-
-            }
         }
+        while(false);
         if(cresult)
         {
             result[name] = converted_value;

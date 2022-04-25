@@ -1,7 +1,6 @@
 #ifndef HEADER_H_ADS_INTERFACE
 #define HEADER_H_ADS_INTERFACE
 
-#include <tinyxml.h>
 #include <cstdlib>
 #include "../lib/AdsLib/standalone/AdsDef.h"
 #include "../lib/AdsLib/AdsLib.h"
@@ -9,6 +8,7 @@
 #include <time.h>
 #include <boost/thread.hpp>
 #include <variant>
+#include <yaml-cpp/yaml.h>
 
 using namespace std;
 class RosAds_Interface
@@ -55,12 +55,12 @@ private:
 
   std::map<string,string> m_VariableADS;
 
-  std::map<string,int> m_VariableMapping;
+  std::map<string,std::pair<int, std::string>> m_VariableMapping;
 
   std::map<string,IAdsVariable*> m_RouteMapping;
 
   int initRoute();
-  bool bindPLcVar();
+  bool bindPLcVar(std::string file, std::string name);
   int checkVariable(string varName);
 };
 #endif

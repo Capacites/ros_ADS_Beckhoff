@@ -1,4 +1,4 @@
 std_msgs/Header header            # header info
 string[] varNames
-uint8[] varTypes
+string[] varTypes
 float64[] varValues
