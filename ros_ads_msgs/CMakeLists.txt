@@ -17,9 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   State.msg
-  ADSWriteValue.msg
-  ADSReadVariables.msg
-  ADSReadValue.msg
+  ADS.msg
   )
 
 generate_messages(
@@ -28,5 +26,19 @@ generate_messages(
 )
 
 catkin_package(
-    CATKIN_DEPENDS message_runtime std_msgs
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS message_runtime std_msgs roscpp
     )
+
+include_directories(include PUBLIC)
+
+add_library(${PROJECT_NAME} SHARED src/ADSDecode.cpp)
+target_link_libraries(${PROJECT_NAME} ${catkin_INCLUDE_DIRS} ${catkin_LIBRARIES})
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)  # 98, 11 or 14
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)

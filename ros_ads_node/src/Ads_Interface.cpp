@@ -38,10 +38,10 @@ string RosAds_server_node::checkVariable(string varName){
   return varType;
 }
 
-bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ads_msgs::ADSWriteValue &res){
+bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADS  &req, ros_ads_msgs::ADS &res){
 
 
-  string varType = checkVariable(req.varName);
+  string varType = checkVariable(req.varNames[0]);
   bool dataCorrect = true;
   bool bresult = true;
   //Sac à break;
@@ -58,23 +58,23 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
     try
     {
 
-      if((uint8_t)req.value == req.value)
+      if((uint8_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          if((uint8_t)req.value == 0){
-            *RouteMapping[req.varName] = false;
-            ROS_INFO("The %s %s now equals false",varType.c_str(),req.varName.c_str());
+          if((uint8_t)req.varValues[0] == 0){
+            *RouteMapping[req.varNames[0]] = false;
+            ROS_INFO("The %s %s now equals false",varType.c_str(),req.varNames[0].c_str());
           }else{
-            *RouteMapping[req.varName] = true;
-            ROS_INFO("The %s %s now equals true",varType.c_str(),req.varName.c_str());
+            *RouteMapping[req.varNames[0]] = true;
+            ROS_INFO("The %s %s now equals true",varType.c_str(),req.varNames[0].c_str());
           }
         }
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<bool>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<bool>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -90,17 +90,17 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
 
     if(varType == "BYTE" || varType == "USINT")
     {
-      if((uint8_t)req.value == req.value)
+      if((uint8_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (uint8_t)req.value;
-          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint8_t)req.value);
+          *RouteMapping[req.varNames[0]] = (uint8_t)req.varValues[0];
+          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varNames[0].c_str(),(uint8_t)req.varValues[0]);
         }
 	catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          factory(req.varName);
+          factory(req.varNames[0]);
         }
       }
       else
@@ -111,18 +111,18 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
 
     if(varType == "SINT")
     {
-      if((int8_t)req.value == req.value)
+      if((int8_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (int8_t)req.value;
-          ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int8_t)req.value);
+          *RouteMapping[req.varNames[0]] = (int8_t)req.varValues[0];
+          ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varNames[0].c_str(),(int8_t)req.varValues[0]);
         }
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<int8_t>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<int8_t>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -133,18 +133,18 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
 
     if(varType == "WORD" || varType == "UINT")
     {
-      if((uint16_t)req.value == req.value)
+      if((uint16_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (uint16_t)req.value;
-          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint16_t)req.value);
+          *RouteMapping[req.varNames[0]] = (uint16_t)req.varValues[0];
+          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varNames[0].c_str(),(uint16_t)req.varValues[0]);
         }
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<uint16_t>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<uint16_t>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -155,18 +155,18 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
 
     if(varType == "INT")
     {
-      if((int16_t)req.value == req.value)
+      if((int16_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (int16_t)req.value;
-         ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int16_t)req.value);
+          *RouteMapping[req.varNames[0]] = (int16_t)req.varValues[0];
+         ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varNames[0].c_str(),(int16_t)req.varValues[0]);
         }
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<int16_t>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<int16_t>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -177,18 +177,18 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
 
     if(varType == "DWORD" || varType == "UDINT")
     {
-      if((uint32_t)req.value == req.value)
+      if((uint32_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (uint32_t)req.value;
-          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varName.c_str(),(uint32_t)req.value);
+          *RouteMapping[req.varNames[0]] = (uint32_t)req.varValues[0];
+          ROS_INFO("The %s %s now equals %u",varType.c_str(),req.varNames[0].c_str(),(uint32_t)req.varValues[0]);
         }
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<uint32_t>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<uint32_t>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -199,18 +199,18 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
 
     if(varType == "DINT")
     {
-      if((int32_t)req.value == req.value)
+      if((int32_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (int32_t)req.value;
-          ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varName.c_str(),(int32_t)req.value);
+          *RouteMapping[req.varNames[0]] = (int32_t)req.varValues[0];
+          ROS_INFO("The %s %s now equals %d",varType.c_str(),req.varNames[0].c_str(),(int32_t)req.varValues[0]);
         }
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<int32_t>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<int32_t>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -221,18 +221,18 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
 
     if(varType == "LWORD" || varType == "ULINT")
     {
-      if((uint64_t)req.value == req.value)
+      if((uint64_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (uint64_t)req.value;
-          ROS_INFO("The %s %s now equals %lu",varType.c_str(),req.varName.c_str(),(uint64_t)req.value);
+          *RouteMapping[req.varNames[0]] = (uint64_t)req.varValues[0];
+          ROS_INFO("The %s %s now equals %lu",varType.c_str(),req.varNames[0].c_str(),(uint64_t)req.varValues[0]);
         }
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<uint64_t>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<uint64_t>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -243,18 +243,18 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
 
     if(varType == "LINT")
     {
-      if((int64_t)req.value == req.value)
+      if((int64_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (int64_t)req.value;
-          ROS_INFO("The %s %s now equals %ld",varType.c_str(),req.varName.c_str(),int64_t(req.value));
+          *RouteMapping[req.varNames[0]] = (int64_t)req.varValues[0];
+          ROS_INFO("The %s %s now equals %ld",varType.c_str(),req.varNames[0].c_str(),int64_t(req.varValues[0]));
         }
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<int64_t>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<int64_t>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -267,14 +267,14 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
     {
       try
       {
-        *RouteMapping[req.varName] = (float)req.value;
-        ROS_INFO("The %s %s now equals %f",varType.c_str(),req.varName.c_str(),(float)req.value);
+        *RouteMapping[req.varNames[0]] = (float)req.varValues[0];
+        ROS_INFO("The %s %s now equals %f",varType.c_str(),req.varNames[0].c_str(),(float)req.varValues[0]);
       }
       catch(AdsException e)
       {
         ROS_ERROR_STREAM(e.what());
-        delete RouteMapping[req.varName];
-        RouteMapping[req.varName] = new AdsVariable<float>(*m_route,req.varName);
+        delete RouteMapping[req.varNames[0]];
+        RouteMapping[req.varNames[0]] = new AdsVariable<float>(*m_route,req.varNames[0]);
       }
     }
 
@@ -282,30 +282,30 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
     {
       try
       {
-        *RouteMapping[req.varName] = req.value;
-        ROS_INFO("The %s %s now equals %lf",varType.c_str(),req.varName.c_str(),req.value);
+        *RouteMapping[req.varNames[0]] = req.varValues[0];
+        ROS_INFO("The %s %s now equals %lf",varType.c_str(),req.varNames[0].c_str(),req.varValues[0]);
       }
       catch(AdsException e)
       {
         ROS_ERROR_STREAM(e.what());
-        delete RouteMapping[req.varName];
-        RouteMapping[req.varName] = new AdsVariable<double>(*m_route,req.varName);
+        delete RouteMapping[req.varNames[0]];
+        RouteMapping[req.varNames[0]] = new AdsVariable<double>(*m_route,req.varNames[0]);
       }
     }
 
     if(varType == "DATE")
     {
-      if((uint32_t)req.value == req.value)
+      if((uint32_t)req.varValues[0] == req.varValues[0])
       {
         try
         {
-          *RouteMapping[req.varName] = (uint32_t)req.value;
-          ros::Time currentDate((uint32_t)req.value);
+          *RouteMapping[req.varNames[0]] = (uint32_t)req.varValues[0];
+          ros::Time currentDate((uint32_t)req.varValues[0]);
           time_t tDate(currentDate.toSec());
           tm tmDate;
           gmtime_r(&tDate,&tmDate);
           ROS_INFO("%s set to : %d/%d/%d %d:%d:%d",
-                 req.varName.c_str(),
+                 req.varNames[0].c_str(),
                  tmDate.tm_mday,
                  tmDate.tm_mon + 1,
                  tmDate.tm_year + 1900,
@@ -316,8 +316,8 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
         catch(AdsException e)
         {
           ROS_ERROR_STREAM(e.what());
-          delete RouteMapping[req.varName];
-          RouteMapping[req.varName] = new AdsVariable<uint32_t>(*m_route,req.varName);
+          delete RouteMapping[req.varNames[0]];
+          RouteMapping[req.varNames[0]] = new AdsVariable<uint32_t>(*m_route,req.varNames[0]);
         }
       }
       else
@@ -325,8 +325,8 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
         dataCorrect = false;
       }
 
-      *RouteMapping[req.varName] = req.value;
-      //ROS_INFO("The %s %s now equals true",varType.c_str(),req.varName.c_str());
+      *RouteMapping[req.varNames[0]] = req.varValues[0];
+      //ROS_INFO("The %s %s now equals true",varType.c_str(),req.varNames[0].c_str());
 
     }
 
@@ -339,11 +339,11 @@ bool RosAds_server_node::adsWriteValue(ros_ads_msgs::ADSWriteValue  &req, ros_ad
   return bresult;
 }
 
-bool RosAds_server_node::adsReadValue(ros_ads_msgs::ADSReadValue  &req, ros_ads_msgs::ADSReadValue &res)
+bool RosAds_server_node::adsReadValue(ros_ads_msgs::ADS  &req, ros_ads_msgs::ADS &res)
 {
   bool bresult =  true;;
 
-  string varType = checkVariable(req.varName);
+  string varType = checkVariable(req.varNames[0]);
   m_ComMutex.lock();
   
   if(varType == ""){
@@ -355,14 +355,14 @@ bool RosAds_server_node::adsReadValue(ros_ads_msgs::ADSReadValue  &req, ros_ads_
   do{
       try
       {
-        RouteMapping[req.varName]->ReadValue(res.value);
-        ROS_INFO("The %s %s equals %f",varType.c_str(),req.varName.c_str(), res.value);
+        RouteMapping[req.varNames[0]]->ReadValue(res.varValues[0]);
+        ROS_INFO("The %s %s equals %f",varType.c_str(),req.varNames[0].c_str(), res.varValues[0]);
       }
       catch(AdsException e)
       {
         bresult = false;
         ROS_ERROR_STREAM(e.what());
-        factory(req.varName);
+        factory(req.varNames[0]);
       }
       break;
     }
@@ -500,9 +500,9 @@ bool RosAds_server_node::bindPLcVar()
     return bresult;
 }
 
-bool RosAds_server_node::adsReadVariables(ros_ads_msgs::ADSReadVariables  &req, ros_ads_msgs::ADSReadVariables &res)
+bool RosAds_server_node::adsReadVariables(ros_ads_msgs::ADS  &req, ros_ads_msgs::ADS &res)
 {
-  res.size = VariableMapping.size();
+  res.varNames.resize(VariableMapping.size());
   res.varNames = vector<string>();
   res.varTypes = vector<string>();
 
@@ -613,35 +613,35 @@ int RosAds_server_node::main(int argc, char **argv)
   }
   
 
-  ros_ads_msgs::ADSReadValue  req;
-  ros_ads_msgs::ADSReadValue res;
+  ros_ads_msgs::ADS  req;
+  ros_ads_msgs::ADS res;
 
-  req.varName = "data1"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+  req.varNames[0] = "data1"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
-req.varName = "data2"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+req.varNames[0] = "data2"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
-req.varName = "data3"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+req.varNames[0] = "data3"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
-req.varName = "data4"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+req.varNames[0] = "data4"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
-req.varName = "data5"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+req.varNames[0] = "data5"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
-req.varName = "data6"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+req.varNames[0] = "data6"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
-req.varName = "data7"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+req.varNames[0] = "data7"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
-req.varName = "data8"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+req.varNames[0] = "data8"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
-req.varName = "data9"; adsReadValue(req,res);
-  ROS_INFO("%s\t%f",req.varName.c_str(),(float)res.value);
+req.varNames[0] = "data9"; adsReadValue(req,res);
+  ROS_INFO("%s\t%f",req.varNames[0].c_str(),(float)res.varValues[0]);
 
   
   try

@@ -29,7 +29,6 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
@@ -59,7 +58,6 @@ set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD 11)  # 98, 11 or 14
 set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(ros_ads_node ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} libAdsLib -lpthread )
-
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
