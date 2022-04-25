@@ -39,7 +39,7 @@ public :
 
 private:
 
-  std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>> m_variables_map;
+  std::map<std::string,std::pair<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>>> m_variables_map;
   string m_remoteNetId;
   string m_remoteIpV4;
   string m_PLCFileDefinitionPath;

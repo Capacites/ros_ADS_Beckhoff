@@ -221,8 +221,9 @@ bool RosAds_Interface::bindPLcVar(std::string file, std::string name)
 
       //ROS_INFO("ADS alias found: %s -> %s",alias.c_str(),adsName.c_str());
 
-      string type = m_VariableADS[adsName];
+      std::string type = m_VariableADS[adsName];
       m_VariableMapping[alias] = std::pair<int, std::string>(convert_type_from_string(type), type);
+      m_variables_map[alias] = std::pair<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>>(type, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>());
 
       switch(m_VariableMapping[name].first)
       {
