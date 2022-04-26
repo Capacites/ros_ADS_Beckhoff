@@ -42,7 +42,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
   bool dataCorrect = true;
   bool bresult = true;
   //Sac à break;
-  m_ComMutex.lock();
+
  
   //La variable n'existe pas
   if( m_VariableMapping.find(name) == m_VariableMapping.end()){
@@ -52,6 +52,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
   }
   else if (m_VariableMapping[name].first == varType)
   {
+    m_ComMutex.lock();
     try
     {
       switch(m_VariableMapping[name].first)
@@ -111,13 +112,13 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
     {
 
     }
+    m_ComMutex.unlock();
   }
   else
   {
     factory(name);
   }
 
-  m_ComMutex.unlock();
   if(!dataCorrect) {
     //ROS_ERROR("Data size not correct");
     bresult =  false;
@@ -125,7 +126,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
   return bresult;
 }
 
-variant_t RosAds_Interface::adsReadValue(string name)
+RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
 {
   variant_t result;
 
@@ -286,7 +287,7 @@ bool RosAds_Interface::bindPLcVar(string file, string name)
     return bresult;
 }
 
-vector<variant_t> RosAds_Interface::adsReadVariables(vector<string> varNames)
+vector<RosAds_Interface::variant_t> RosAds_Interface::adsReadVariables(vector<string> varNames)
 {
   vector<variant_t> result;
 

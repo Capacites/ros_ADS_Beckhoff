@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_BUILD_TYPE debug)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -57,7 +59,7 @@ add_dependencies(ros_ads_node ${catkin_EXPORTED_TARGETS})
 set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD 17)
 set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD_REQUIRED ON)
 
-target_link_libraries(ros_ads_node ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} libAdsLib -lpthread )
+target_link_libraries(ros_ads_node ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} yaml-cpp libAdsLib -lpthread )
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html

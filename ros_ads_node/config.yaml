@@ -1,9 +1,12 @@
+#automat map
+
 test_device:
 
-  IP: 172.21.176.50
-  NetID: 172.18.236.170.1.1
-  
+  remoteIP: '172.21.176.50'
+  remoteNetID: '172.18.236.170.1.1'
+  localNetID: '172.21.176.60.1.1'
   publish_rate: 10 #Hz 
+  refresh_rate: 10 #Hz
   state_rate: 1 #Hz 
       
   publish_on_timer: 
@@ -17,3 +20,4 @@ test_device:
   variables:
     test1: alias1
     test2: alias2
+    

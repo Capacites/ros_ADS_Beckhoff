@@ -1,7 +1,8 @@
 #include <ros_ads_msgs/ADSDecode.h>
-using namespace  Ros_ads_msgs;
 
-std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>> decode(ros_ads_msgs::ADS msg)
+using namespace ros_ads_msgs;
+
+std::map<std::string, variant_t> ros_ads_msgs::decode(const ros_ads_msgs::ADS::ConstPtr &msg)
 {
     std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>> result;
     std::string name;
@@ -10,14 +11,14 @@ std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uin
     bool cresult;
     std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> converted_value;
 
-    int minSize = std::min(std::min(msg.varNames.size(), msg.varTypes.size()), msg.varValues.size());
+    int minSize = std::min(std::min(msg->varNames.size(), msg->varTypes.size()), msg->varValues.size());
 
     for(int index = 0; index < minSize; index ++)
     {
         cresult = false;
-        name = msg.varNames[index];
-        type = msg.varTypes[index];
-        value = msg.varValues[index];
+        name = msg->varNames[index];
+        type = msg->varTypes[index];
+        value = msg->varValues[index];
         do
         {
             if(type == "BOOL")

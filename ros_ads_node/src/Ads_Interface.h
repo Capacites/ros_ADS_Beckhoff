@@ -1,6 +1,7 @@
 #ifndef HEADER_H_ADS_INTERFACE
 #define HEADER_H_ADS_INTERFACE
 
+#include <yaml-cpp/yaml.h>
 #include <cstdlib>
 #include "../lib/AdsLib/standalone/AdsDef.h"
 #include "../lib/AdsLib/AdsLib.h"
@@ -9,7 +10,6 @@
 #include <boost/thread.hpp>
 #include <variant>
 #include <mutex>
-#include <yaml-cpp/yaml.h>
 
 using namespace std;
 
@@ -30,6 +30,7 @@ class RosAds_Interface
     };
 
 public :
+
   using variant_t = variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>;
 
   RosAds_Interface();
@@ -61,9 +62,6 @@ public :
 
 private:
 
-  void __stdcall Callback(AmsAddr*, AdsNotificationHeader*, unsigned long);
-
-  map<string, pair<string, variant_t>> m_variables_map;
   string m_remoteNetId;
   string m_remoteIpV4;
   string m_localNetId_param;
@@ -79,6 +77,10 @@ private:
   map<string,string> m_VariableADS;
   map<string,pair<int, string>> m_VariableMapping;
   map<string,IAdsVariable*> m_RouteMapping;
+  map<string, pair<string, variant_t>> m_variables_map;
 
+  mutex m_VariableMapping_guard;
+  mutex m_RouteMapping_guard;
+  mutex m_variables_map_guard;
 };
 #endif

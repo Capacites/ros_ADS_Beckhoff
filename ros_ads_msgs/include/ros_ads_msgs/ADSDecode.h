@@ -8,7 +8,9 @@
 #include <time.h>
 #include <ros_ads_msgs/ADS.h>
 
-namespace Ros_ads_msgs {
+namespace ros_ads_msgs {
+
+using variant_t = std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>;
 
 enum{
     BOOL,
@@ -24,7 +26,7 @@ enum{
     DATE,
 };
 
-std::map<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>> decode(ros_ads_msgs::ADS msg);
+std::map<std::string, variant_t> decode(const ros_ads_msgs::ADS::ConstPtr &msg);
 
 }
 

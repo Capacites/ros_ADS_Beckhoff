@@ -1,15 +1,17 @@
 #ifndef HEADER_H_ADS_NODE
 #define HEADER_H_ADS_NODE
 
+//YAML include
+#include <yaml-cpp/yaml.h>
+
 #include "ros/ros.h"
 #include "ros/package.h"
 #include <ros/callback_queue.h>
 #include "Ads_Interface.h"
 #include <ros_ads_msgs/ADS.h>
+#include <ros_ads_msgs/State.h>
 #include <ros_ads_msgs/ADSDecode.h>
 
-//YAML include
-#include <yaml-cpp/yaml.h>
 
 //Standard includes
 #include <memory>
@@ -19,6 +21,8 @@
 #include <mutex>
 #include <set>
 
+#include <boost/thread.hpp>
+
 using namespace std::chrono_literals;
 using namespace std;
 
@@ -26,35 +30,48 @@ namespace ads_node {
 
 class ADSNode
 {
+
 public:
     bool initialize(int argc, char **argv);
     bool main(int argc, char **argv);
     void GetDeviceAdsVariables();
-    void timerCallback();
-    void checkerCallback();
-    bool SubscriberCallback(ros_ads_msgs::ADS msg);
+    void timerCallback(int* timer_rate);
+    void checkerCallback(int* timer_rate);
+    bool SubscriberCallback(const ros_ads_msgs::ADS::ConstPtr& msg);
+    void publishTimerCallback(int* timer_rate);
 
 private:
-    string m_localNetId_param;
-    string m_remoteNetId;
-    string m_remoteIpV4;
+
+    bool m_publish{false};                /*!< Control to publish event message         */
+    bool m_configOK{false};               /*!< Configuration state to the modbus device */
+
+    int m_rate_update;
+    int m_rate_state;
+    int m_rate_publish;
+
+    map<string, pair<string, double>> m_publish_on_timer;
+    map<string, pair<string, double>> m_publish_on_event;
+    map<string, pair<string, double>> m_variables;
+
+    pair<string, double> m_checker_temp_value;
+
     RosAds_Interface m_ADS = RosAds_Interface();
     string m_name;
     string m_config_file;
 
-    ros::CallbackQueue m_subscriber_queue;
-    ros::CallbackQueue m_publisher_queue;
-    ros::CallbackQueue m_update_queue;
-    ros::CallbackQueue m_checker_queue;
-    ros::CallbackQueue m_state_queue;
+    ros_ads_msgs::ADS m_on_event_msg;
+    ros_ads_msgs::ADS m_on_timer_msg;
+    ros_ads_msgs::State m_state_msg;
 
     ros::Publisher m_state_publisher;
     ros::Publisher m_on_event_publisher;
     ros::Publisher m_on_timer_publisher;
     ros::Subscriber m_subscriber;
 
-    map<string, pair<string,  RosAds_Interface::variant_t>> m_variables_map;
-    map<string, pair<string,  RosAds_Interface::variant_t>> m_variables_map_temp;
+    boost::thread* m_update_thread;
+    boost::thread* m_checker_thread;
+    boost::thread* m_timer_thread;
+    //boost::thread* m_subscriber_thread;
 };
 
 }
