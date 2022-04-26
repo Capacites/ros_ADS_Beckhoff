@@ -14,7 +14,7 @@ RosAds_Interface::~RosAds_Interface()
     delete m_AmsNetIdremoteNetId;
   }
 
-  for(std::map<string,IAdsVariable*>::iterator it = m_RouteMapping.begin(); it != m_RouteMapping.end(); ++it)
+  for(map<string,IAdsVariable*>::iterator it = m_RouteMapping.begin(); it != m_RouteMapping.end(); ++it)
   {
      delete it->second;
   }
@@ -26,7 +26,7 @@ RosAds_Interface::RosAds_Interface()
 
 int RosAds_Interface::checkVariable(string varName){
   int varType = -1;
-    std::map<string,std::pair<int, std::string>>::iterator it;
+    map<string,pair<int, string>>::iterator it;
      it= m_VariableMapping.find(varName);
   if(it != m_VariableMapping.end())
   {
@@ -35,7 +35,7 @@ int RosAds_Interface::checkVariable(string varName){
   return varType;
 }
 
-bool RosAds_Interface::adsWriteValue(std::string name, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> value){
+bool RosAds_Interface::adsWriteValue(string name, variant_t value){
 
 
   int varType = checkVariable(name);
@@ -58,47 +58,47 @@ bool RosAds_Interface::adsWriteValue(std::string name, std::variant<bool, uint8_
       {
       case BOOL:
       {
-          *m_RouteMapping[name] = std::get<bool>(value);
+          *m_RouteMapping[name] = get<bool>(value);
       }
       case UINT8_T:
       {
-          *m_RouteMapping[name] = std::get<uint8_t>(value);
+          *m_RouteMapping[name] = get<uint8_t>(value);
       }
       case INT8_T:
       {
-          *m_RouteMapping[name] = std::get<int8_t>(value);
+          *m_RouteMapping[name] = get<int8_t>(value);
       }
       case UINT16_T:
       {
-          *m_RouteMapping[name] = std::get<uint16_t>(value);
+          *m_RouteMapping[name] = get<uint16_t>(value);
       }
       case INT16_T:
       {
-          *m_RouteMapping[name] = std::get<int16_t>(value);
+          *m_RouteMapping[name] = get<int16_t>(value);
       }
       case UINT32_T:
       {
-          *m_RouteMapping[name] = std::get<uint32_t>(value);
+          *m_RouteMapping[name] = get<uint32_t>(value);
       }
       case INT32_T:
       {
-          *m_RouteMapping[name] = std::get<int32_t>(value);
+          *m_RouteMapping[name] = get<int32_t>(value);
       }
       case INT64_T:
       {
-          *m_RouteMapping[name] = std::get<int64_t>(value);
+          *m_RouteMapping[name] = get<int64_t>(value);
       }
       case FLOAT:
       {
-          *m_RouteMapping[name] = std::get<float>(value);
+          *m_RouteMapping[name] = get<float>(value);
       }
       case DOUBLE:
       {
-          *m_RouteMapping[name] = std::get<double>(value);
+          *m_RouteMapping[name] = get<double>(value);
       }
       case DATE:
       {
-          tm temp = std::get<tm>(value);
+          tm temp = get<tm>(value);
           *m_RouteMapping[name] = mktime(&temp);
       }
       default:
@@ -125,9 +125,9 @@ bool RosAds_Interface::adsWriteValue(std::string name, std::variant<bool, uint8_
   return bresult;
 }
 
-std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> RosAds_Interface::adsReadValue(std::string name)
+variant_t RosAds_Interface::adsReadValue(string name)
 {
-  std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> result;
+  variant_t result;
 
   if(m_RouteMapping.find(name) != m_RouteMapping.end())
   {
@@ -198,7 +198,7 @@ std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_
   return result;
 }
 
-bool RosAds_Interface::bindPLcVar(std::string file, std::string name)
+bool RosAds_Interface::bindPLcVar(string file, string name)
 {
   bool bresult = false;
   YAML::Node config = YAML::LoadFile(file);
@@ -209,8 +209,8 @@ bool RosAds_Interface::bindPLcVar(std::string file, std::string name)
     //Read each alias with corresponding ADS name
     for(YAML::const_iterator element=config[name]["variables"].begin();element!=config[name]["variables"].end();++element)
     {
-      string alias = element->first.as<std::string>();
-      string adsName = element->second.as<std::string>();
+      string alias = element->first.as<string>();
+      string adsName = element->second.as<string>();
 
       //Check if ADS name is part of downloaded PLC ADS list
       if ( m_VariableADS.find(adsName) == m_VariableADS.end() )
@@ -221,9 +221,9 @@ bool RosAds_Interface::bindPLcVar(std::string file, std::string name)
 
       //ROS_INFO("ADS alias found: %s -> %s",alias.c_str(),adsName.c_str());
 
-      std::string type = m_VariableADS[adsName];
-      m_VariableMapping[alias] = std::pair<int, std::string>(convert_type_from_string(type), type);
-      m_variables_map[alias] = std::pair<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>>(type, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>());
+      string type = m_VariableADS[adsName];
+      m_VariableMapping[alias] = pair<int, string>(convert_type_from_string(type), type);
+      m_variables_map[alias] = pair<string, variant_t>(type, variant_t());
 
       switch(m_VariableMapping[name].first)
       {
@@ -286,9 +286,9 @@ bool RosAds_Interface::bindPLcVar(std::string file, std::string name)
     return bresult;
 }
 
-std::vector<std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>> RosAds_Interface::adsReadVariables(std::vector<std::string> varNames)
+vector<variant_t> RosAds_Interface::adsReadVariables(vector<string> varNames)
 {
-  std::vector<std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>> result;
+  vector<variant_t> result;
 
   for (auto& name: varNames)
   {
@@ -376,7 +376,7 @@ bool RosAds_Interface::factory(string  varName)
     return result;
 }
 
-int RosAds_Interface::convert_type_from_string(std::string type)
+int RosAds_Interface::convert_type_from_string(string type)
 {
    int result = -1;
    do
@@ -439,4 +439,24 @@ int RosAds_Interface::convert_type_from_string(std::string type)
    }
    while(false);
    return result;
+}
+
+bool  RosAds_Interface::addVariable(string name)
+{
+    bool result = false;
+    auto it = m_VariableMapping.find(name);
+    if(it != m_VariableMapping.end())
+    {
+        m_variables_map[name] = pair<string, variant_t>(m_VariableMapping[name].second, variant_t());
+        result = true;
+    }
+    return result;
+}
+
+void RosAds_Interface::updateMemory()
+{
+    for(auto &[name, pair]: m_variables_map)
+    {
+        pair.second = adsReadValue(name);
+    }
 }

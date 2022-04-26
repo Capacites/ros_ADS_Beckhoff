@@ -8,9 +8,11 @@
 #include <time.h>
 #include <boost/thread.hpp>
 #include <variant>
+#include <mutex>
 #include <yaml-cpp/yaml.h>
 
 using namespace std;
+
 class RosAds_Interface
 {
     enum{
@@ -28,39 +30,55 @@ class RosAds_Interface
     };
 
 public :
+  using variant_t = variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>;
+
   RosAds_Interface();
   ~RosAds_Interface();
 
-  bool adsWriteValue(std::string name, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> value);
-  std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm> adsReadValue(std::string varName);
-  std::vector<std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>> adsReadVariables(std::vector<std::string> varNames);
+  bool adsWriteValue(string name, variant_t value);
+  variant_t adsReadValue(string varName);
+  vector<variant_t> adsReadVariables(vector<string> varNames);
   bool factory(string varName);
-  int convert_type_from_string(std::string);
+  int convert_type_from_string(string);
+
+  void setRemoteNetID(string netId){m_remoteNetId = netId;}
+  string getRemoteNetID(){return m_remoteNetId;}
+  void setRemoteIPV4(string address){m_remoteIpV4 = address;}
+  string getRemoteIPV4(){return m_remoteIpV4;}
+  void setLocalNetID(string netId){m_localNetId_param = netId;
+                                  AdsSetLocalAddress(m_localNetId_param);}
+  string getLocalNetID(){return m_localNetId_param;}
+  bool addVariable(string);
+  map<string, pair<string, variant_t>> getVariablesMap(){return m_variables_map;}
+  void updateMemory();
+  void addMonitoredVariable(string);
+  void addNotification();
+
+  int initRoute();
+  bool bindPLcVar(string file, string name);
+  int checkVariable(string varName);
+  void acquireVariables(){m_VariableADS = m_route->GetDeviceAdsVariables();}
 
 private:
 
-  std::map<std::string,std::pair<std::string, std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>>> m_variables_map;
+  void __stdcall Callback(AmsAddr*, AdsNotificationHeader*, unsigned long);
+
+  map<string, pair<string, variant_t>> m_variables_map;
   string m_remoteNetId;
   string m_remoteIpV4;
-  string m_PLCFileDefinitionPath;
   string m_localNetId_param;
-
   double m_temp;
 
   AmsNetId* m_AmsNetIdremoteNetId;
   AdsDevice *m_route;
 
-  ///Mutex utile pour la communication
-  boost::mutex m_ComMutex;
+  //Mutex utile pour la communication
+  mutex m_ComMutex;
+  mutex m_MemMutex;
 
-  std::map<string,string> m_VariableADS;
+  map<string,string> m_VariableADS;
+  map<string,pair<int, string>> m_VariableMapping;
+  map<string,IAdsVariable*> m_RouteMapping;
 
-  std::map<string,std::pair<int, std::string>> m_VariableMapping;
-
-  std::map<string,IAdsVariable*> m_RouteMapping;
-
-  int initRoute();
-  bool bindPLcVar(std::string file, std::string name);
-  int checkVariable(string varName);
 };
 #endif
