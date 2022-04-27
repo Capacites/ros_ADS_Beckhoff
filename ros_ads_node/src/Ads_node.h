@@ -32,8 +32,7 @@ class ADSNode
 {
 
 public:
-    bool initialize(int argc, char **argv);
-    bool main(int argc, char **argv);
+    bool initialize();
     void GetDeviceAdsVariables();
     void timerCallback(int* timer_rate);
     void checkerCallback(int* timer_rate);
@@ -52,6 +51,9 @@ private:
     map<string, pair<string, double>> m_publish_on_timer;
     map<string, pair<string, double>> m_publish_on_event;
     map<string, pair<string, double>> m_variables;
+    mutex m_publish_on_timer_guard;
+    mutex m_publish_on_event_guard;
+    mutex m_variables_guard;
 
     pair<string, double> m_checker_temp_value;
 
@@ -68,10 +70,10 @@ private:
     ros::Publisher m_on_timer_publisher;
     ros::Subscriber m_subscriber;
 
-    boost::thread* m_update_thread;
-    boost::thread* m_checker_thread;
-    boost::thread* m_timer_thread;
-    //boost::thread* m_subscriber_thread;
+    shared_ptr<boost::thread> m_update_thread;
+    shared_ptr<boost::thread> m_checker_thread;
+    shared_ptr<boost::thread> m_timer_thread;
+    shared_ptr<boost::thread> m_subscriber_thread;
 };
 
 }

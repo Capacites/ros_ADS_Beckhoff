@@ -7,7 +7,7 @@
 #include "../lib/AdsLib/AdsLib.h"
 #include "../lib/AdsLib/AdsVariable.h"
 #include <time.h>
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include <variant>
 #include <mutex>
 
@@ -71,8 +71,8 @@ private:
   AdsDevice *m_route;
 
   //Mutex utile pour la communication
-  mutex m_ComMutex;
-  mutex m_MemMutex;
+  //mutex m_ComMutex;
+  //mutex m_MemMutex;
 
   map<string,string> m_VariableADS;
   map<string,string> m_Alias_map;

@@ -4,7 +4,7 @@ using namespace std;
 
 RosAds_Interface::~RosAds_Interface()
 {
-  m_ComMutex.lock();
+  //m_ComMutex.lock();
   if(m_route)
   {
     delete m_route;
@@ -52,7 +52,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
   }
   else if (m_VariableMapping[name].first == varType)
   {
-    m_ComMutex.lock();
+    //m_ComMutex.lock();
     try
     {
       switch(m_VariableMapping[name].first)
@@ -123,7 +123,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
     {
 
     }
-    m_ComMutex.unlock();
+    //m_ComMutex.unlock();
   }
   else
   {
@@ -143,7 +143,7 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
 
   if(m_RouteMapping.find(name) != m_RouteMapping.end())
   {
-      m_ComMutex.lock();
+      //m_ComMutex.lock();
       try
       {
 
@@ -213,11 +213,11 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
         }
       }
       }
-      catch(AdsException e)
+      catch(...)
       {
         factory(name);
       }
-      m_ComMutex.unlock();
+      //m_ComMutex.unlock();
   }
   return result;
 }

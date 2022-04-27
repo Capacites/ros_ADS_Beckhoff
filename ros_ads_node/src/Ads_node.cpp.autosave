@@ -207,10 +207,12 @@ void ADSNode::publishTimerCallback(int* timer_rate)
             m_publish_on_timer_guard.lock();
             auto publish_on_timer = m_publish_on_timer;
             m_publish_on_timer_guard.unlock();
+            
             for(auto &[name, pair]: publish_on_timer)
             {
                 m_on_timer_msg.varNames.push_back(name);
                 m_on_timer_msg.varTypes.push_back(pair.first);
+                
                 m_variables_guard.lock();
                 m_on_timer_msg.varValues.push_back(m_variables[name].second);
                 m_variables_guard.unlock();

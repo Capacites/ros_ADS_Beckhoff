@@ -5,8 +5,8 @@ test_device:
   remoteIP: "172.21.176.50"
   remoteNetID: "172.18.236.170.1.1"
   localNetID: "172.21.176.10.1.1"
-  publish_rate: 10 #Hz 
-  refresh_rate: 10 #Hz
+  publish_rate: 1 #Hz 
+  refresh_rate: 1 #Hz
   state_rate: 1 #Hz
   
   publish_on_timer: 
