@@ -17,7 +17,7 @@ struct IAdsVariable {
   virtual void operator=(const float& value){}
   virtual void operator=(const double& value){}
  
-  virtual void ReadValue(double &res){}
+  virtual void ReadValue(double *res){}
 }; 
 
 
@@ -48,12 +48,12 @@ struct AdsVariable : public IAdsVariable {
 
     }
 
-    void ReadValue(double &res) override
+    void ReadValue(double *res) override
     {
 	T buffer;
         Read(sizeof(buffer), &buffer);
 
-	res = (double)buffer;
+        *res = (float)buffer;
     }
 
     template<typename U, size_t N>

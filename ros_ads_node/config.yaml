@@ -2,22 +2,21 @@
 
 test_device:
 
-  remoteIP: '172.21.176.50'
-  remoteNetID: '172.18.236.170.1.1'
-  localNetID: '172.21.176.60.1.1'
+  remoteIP: "172.21.176.50"
+  remoteNetID: "172.18.236.170.1.1"
+  localNetID: "172.21.176.10.1.1"
   publish_rate: 10 #Hz 
   refresh_rate: 10 #Hz
-  state_rate: 1 #Hz 
-      
+  state_rate: 1 #Hz
+  
   publish_on_timer: 
-    - di_in_test1
-    - di_in_test2
-    - di_out_test1
+    - alias1
   
   publish_on_event:
-    - di_in_test1
+    - alias1
   
   variables:
-    test1: alias1
-    test2: alias2
-    
+    GVL_ROS.TOTO: alias1
+    GVL_ROS.COUNTER: alias2
+    GVL_ROS.BoolTOTO: alias3
+    GVL_ROS.IntTOTO: alias4

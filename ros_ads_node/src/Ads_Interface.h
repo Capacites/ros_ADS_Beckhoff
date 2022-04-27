@@ -47,7 +47,7 @@ public :
   void setRemoteIPV4(string address){m_remoteIpV4 = address;}
   string getRemoteIPV4(){return m_remoteIpV4;}
   void setLocalNetID(string netId){m_localNetId_param = netId;
-                                  AdsSetLocalAddress(m_localNetId_param);}
+                                  AdsSetLocalAddress(AmsNetId(m_localNetId_param));}
   string getLocalNetID(){return m_localNetId_param;}
   bool addVariable(string);
   map<string, pair<string, variant_t>> getVariablesMap(){return m_variables_map;}
@@ -75,6 +75,7 @@ private:
   mutex m_MemMutex;
 
   map<string,string> m_VariableADS;
+  map<string,string> m_Alias_map;
   map<string,pair<int, string>> m_VariableMapping;
   map<string,IAdsVariable*> m_RouteMapping;
   map<string, pair<string, variant_t>> m_variables_map;

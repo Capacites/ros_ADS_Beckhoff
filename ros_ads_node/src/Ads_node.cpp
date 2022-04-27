@@ -93,7 +93,7 @@ void ADSNode::timerCallback(int* timer_rate)
         {
 
         }
-        loop_rate.sleep();
+        //loop_rate.sleep();
     }
 }
 
@@ -125,8 +125,10 @@ void ADSNode::checkerCallback(int* timer_rate)
             for (auto &[key, pair] : m_publish_on_event)
             {
                 m_on_event_msg.varNames.push_back(key);
-                m_on_event_msg.varTypes.push_back(pair.first);
-                m_on_event_msg.varValues.push_back(pair.second);
+                auto type = pair.first;
+                m_on_event_msg.varTypes.push_back(type);
+                auto value = pair.second;
+                m_on_event_msg.varValues.push_back(value);
             }
             if(m_on_event_msg.varNames.size() !=0)
             {
@@ -145,12 +147,13 @@ void ADSNode::publishTimerCallback(int* timer_rate)
     ros::Rate loop_rate(*timer_rate);
     while(ros::ok())
     {
+        printf("alive");
         m_on_timer_msg.header.stamp.setNow(ros::Time());
         m_on_timer_msg.varNames = vector<string>();
         m_on_timer_msg.varTypes = vector<string>();
         m_on_timer_msg.varValues = vector<double>();
 
-        for(auto &[name, pair]: m_variables)
+        for(auto &[name, pair]: m_publish_on_timer)
         {
             m_on_timer_msg.varNames.push_back(name);
             m_on_timer_msg.varTypes.push_back(pair.first);
@@ -190,10 +193,15 @@ bool ADSNode::initialize(int argc, char **argv)
             {
                 m_ADS.setLocalNetID(config[m_name]["localNetID"].as<string>());
                 m_ADS.setRemoteNetID(config[m_name]["remoteNetID"].as<string>());
-                m_ADS.setRemoteNetID(config[m_name]["remoteIP"].as<string>());
+                m_ADS.setRemoteIPV4(config[m_name]["remoteIP"].as<string>());
                 m_rate_update = config[m_name]["refresh_rate"].as<int>();
                 m_rate_publish = config[m_name]["publish_rate"].as<int>();
                 m_rate_state = config[m_name]["state_rate"].as<int>();
+                auto onTimer = config[m_name]["publish_on_timer"].as<vector<string>>();
+                for(auto & var: onTimer)
+                {
+                    m_publish_on_timer[var] = pair<string, double>();
+                }
             }
         } catch (...) {
             ROS_ERROR("Invalid configuration file");
@@ -205,13 +213,13 @@ bool ADSNode::initialize(int argc, char **argv)
       return 0;
     }
 
-    //try
+    try
     {
         ROS_INFO_STREAM("GO FOR Init Route");
         m_ADS.initRoute();
         ROS_INFO("Init Route done");
     }
-    //catch(...)
+    catch(...)
     {
         ROS_ERROR("ERROR while connecting with ADS");
         return 0;
@@ -236,7 +244,10 @@ bool ADSNode::initialize(int argc, char **argv)
 
     try
     {
-        m_subscriber = n.subscribe<ros_ads_msgs::ADS>("chatter", 1, boost::bind(&ADSNode::SubscriberCallback, this, _1));
+        m_subscriber = n.subscribe<ros_ads_msgs::ADS>("command", 1, boost::bind(&ADSNode::SubscriberCallback, this, _1));
+        m_on_event_publisher = n.advertise<ros_ads_msgs::ADS>("report_event", 10);
+        m_on_timer_publisher = n.advertise<ros_ads_msgs::ADS>("report_timer", 10);
+        m_state_publisher = n.advertise<ros_ads_msgs::State>("state", 10);
     }
     catch (...)
     {
@@ -251,18 +262,12 @@ bool ADSNode::initialize(int argc, char **argv)
 bool ADSNode::main(int argc, char **argv)
 {
     bool result = initialize(argc, argv);
+    cout << (result);
     if(result)
     {
         m_timer_thread = new boost::thread(&ADSNode::publishTimerCallback,this, &m_rate_publish);
         m_update_thread = new boost::thread(&ADSNode::timerCallback,this, &m_rate_update);
         m_checker_thread = new boost::thread(&ADSNode::checkerCallback,this, &m_rate_update);
-    }
-    while (ros::ok())
-    {
-        if(result)
-        {
-
-        }
     }
 
     return 0;

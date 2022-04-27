@@ -60,47 +60,58 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
       case BOOL:
       {
           *m_RouteMapping[name] = get<bool>(value);
+          break;
       }
       case UINT8_T:
       {
           *m_RouteMapping[name] = get<uint8_t>(value);
+          break;
       }
       case INT8_T:
       {
           *m_RouteMapping[name] = get<int8_t>(value);
+          break;
       }
       case UINT16_T:
       {
           *m_RouteMapping[name] = get<uint16_t>(value);
+          break;
       }
       case INT16_T:
       {
           *m_RouteMapping[name] = get<int16_t>(value);
+          break;
       }
       case UINT32_T:
       {
           *m_RouteMapping[name] = get<uint32_t>(value);
+          break;
       }
       case INT32_T:
       {
           *m_RouteMapping[name] = get<int32_t>(value);
+          break;
       }
       case INT64_T:
       {
           *m_RouteMapping[name] = get<int64_t>(value);
+          break;
       }
       case FLOAT:
       {
           *m_RouteMapping[name] = get<float>(value);
+          break;
       }
       case DOUBLE:
       {
           *m_RouteMapping[name] = get<double>(value);
+          break;
       }
       case DATE:
       {
           tm temp = get<tm>(value);
           *m_RouteMapping[name] = mktime(&temp);
+          break;
       }
       default:
       {
@@ -132,57 +143,69 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
 
   if(m_RouteMapping.find(name) != m_RouteMapping.end())
   {
+      m_ComMutex.lock();
       try
       {
-        m_ComMutex.lock();
-        m_RouteMapping[name]->ReadValue(m_temp);
-        m_ComMutex.unlock();
+
+        m_RouteMapping[name]->ReadValue(&m_temp);
+
         //ROS_INFO("The %s %s equals %f",varType.c_str(),name.c_str(), res.varValues[0]);
         switch(m_VariableMapping[name].first)
         {
         case BOOL:
         {
             result =(bool)m_temp;
+            break;
         }
         case UINT8_T:
         {
             result = (uint8_t)m_temp;
+            break;
         }
         case INT8_T:
         {
             result = (int8_t)m_temp;
+            break;
         }
         case UINT16_T:
         {
             result = (uint16_t)m_temp;
+            break;
         }
         case INT16_T:
         {
             result = (int16_t)m_temp;
+            break;
         }
         case UINT32_T:
         {
             result = (uint32_t)m_temp;
+            break;
         }
         case INT32_T:
         {
             result = (int32_t)m_temp;
+            break;
         }
         case INT64_T:
         {
             result = (int64_t)m_temp;
+            break;
         }
         case FLOAT:
         {
             result = (float)m_temp;
+            break;
         }
         case DOUBLE:
         {
             result = (double)m_temp;
+            break;
         }
         case DATE:
         {
             result = (uint32_t)m_temp;
+            break;
         }
         default:
         {
@@ -192,9 +215,9 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
       }
       catch(AdsException e)
       {
-        //ROS_ERROR_STREAM(e.what());
         factory(name);
       }
+      m_ComMutex.unlock();
   }
   return result;
 }
@@ -210,9 +233,8 @@ bool RosAds_Interface::bindPLcVar(string file, string name)
     //Read each alias with corresponding ADS name
     for(YAML::const_iterator element=config[name]["variables"].begin();element!=config[name]["variables"].end();++element)
     {
-      string alias = element->first.as<string>();
-      string adsName = element->second.as<string>();
-
+      string adsName = element->first.as<string>();
+      string alias = element->second.as<string>();
       //Check if ADS name is part of downloaded PLC ADS list
       if ( m_VariableADS.find(adsName) == m_VariableADS.end() )
       {
@@ -225,52 +247,63 @@ bool RosAds_Interface::bindPLcVar(string file, string name)
       string type = m_VariableADS[adsName];
       m_VariableMapping[alias] = pair<int, string>(convert_type_from_string(type), type);
       m_variables_map[alias] = pair<string, variant_t>(type, variant_t());
-
-      switch(m_VariableMapping[name].first)
+      m_Alias_map[alias] = adsName;
+      switch(m_VariableMapping[alias].first)
       {
       case BOOL:
       {
           m_RouteMapping[alias] = new AdsVariable<bool>(*m_route, adsName);
+          break;
       }
       case UINT8_T:
       {
           m_RouteMapping[alias] = new AdsVariable<uint8_t>(*m_route, adsName);
+          break;
       }
       case INT8_T:
       {
           m_RouteMapping[alias] = new AdsVariable<int8_t>(*m_route, adsName);
+          break;
       }
       case UINT16_T:
       {
           m_RouteMapping[alias] = new AdsVariable<uint16_t>(*m_route, adsName);
+          break;
       }
       case INT16_T:
       {
           m_RouteMapping[alias] = new AdsVariable<int16_t>(*m_route, adsName);
+          break;
       }
       case UINT32_T:
       {
           m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, adsName);
+          break;
       }
       case INT32_T:
       {
           m_RouteMapping[alias] = new AdsVariable<int32_t>(*m_route, adsName);
+          break;
       }
       case INT64_T:
       {
           m_RouteMapping[alias] = new AdsVariable<int64_t>(*m_route, adsName);
+          break;
       }
       case FLOAT:
       {
           m_RouteMapping[alias] = new AdsVariable<float>(*m_route, adsName);
+          break;
       }
       case DOUBLE:
       {
           m_RouteMapping[alias] = new AdsVariable<double>(*m_route, adsName);
+          break;
       }
       case DATE:
       {
           m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, adsName);
+          break;
       }
       default:
       {
@@ -320,52 +353,52 @@ bool RosAds_Interface::factory(string  varName)
               delete m_RouteMapping[varName];
           }
           if(type == "BOOL"){
-            m_RouteMapping[varName] = new AdsVariable<bool>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<bool>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "BYTE" || type == "USINT"){
-            m_RouteMapping[varName] = new AdsVariable<uint8_t>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<uint8_t>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "SINT"){
-            m_RouteMapping[varName] = new AdsVariable<int8_t>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<int8_t>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "WORD" || type == "UINT"){
-            m_RouteMapping[varName] = new AdsVariable<uint16_t>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<uint16_t>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "INT"){
-            m_RouteMapping[varName] = new AdsVariable<int16_t>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<int16_t>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "DWORD" || type == "UDINT" || type == "DATE" || type == "TIME" || type == "TIME_OF_DAY" || type == "LTIME"){
-            m_RouteMapping[varName] = new AdsVariable<uint32_t>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<uint32_t>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "DINT"){
-            m_RouteMapping[varName] = new AdsVariable<int32_t>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<int32_t>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "LINT"){
-            m_RouteMapping[varName] = new AdsVariable<int64_t>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<int64_t>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "REAL"){
-            m_RouteMapping[varName] = new AdsVariable<float>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<float>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
           if(type == "LREAL"){
-            m_RouteMapping[varName] = new AdsVariable<double>(*m_route,varName);
+            m_RouteMapping[varName] = new AdsVariable<double>(*m_route, m_Alias_map[varName]);
             result = true;
             break;
           }
