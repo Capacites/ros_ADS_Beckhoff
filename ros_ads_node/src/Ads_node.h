@@ -34,10 +34,11 @@ class ADSNode
 public:
     bool initialize();
     void GetDeviceAdsVariables();
-    void timerCallback(int* timer_rate);
-    void checkerCallback(int* timer_rate);
+    void timerCallback(int timer_rate);
+    void checkerCallback(int timer_rate);
+    void publishTimerCallback(int timer_rate);
+    void publishStateCallback(int timer_rate);
     bool SubscriberCallback(const ros_ads_msgs::ADS::ConstPtr& msg);
-    void publishTimerCallback(int* timer_rate);
 
 private:
 
@@ -73,7 +74,7 @@ private:
     shared_ptr<boost::thread> m_update_thread;
     shared_ptr<boost::thread> m_checker_thread;
     shared_ptr<boost::thread> m_timer_thread;
-    shared_ptr<boost::thread> m_subscriber_thread;
+    shared_ptr<boost::thread> m_state_thread;
 };
 
 }

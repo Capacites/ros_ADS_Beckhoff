@@ -4,7 +4,7 @@ using namespace std;
 
 RosAds_Interface::~RosAds_Interface()
 {
-  //m_ComMutex.lock();
+  m_ComMutex.lock();
   if(m_route)
   {
     delete m_route;
@@ -18,6 +18,7 @@ RosAds_Interface::~RosAds_Interface()
   {
      delete it->second;
   }
+  m_ComMutex.unlock();
 }
 
 RosAds_Interface::RosAds_Interface()
@@ -52,7 +53,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
   }
   else if (m_VariableMapping[name].first == varType)
   {
-    //m_ComMutex.lock();
+    m_ComMutex.lock();
     try
     {
       switch(m_VariableMapping[name].first)
@@ -123,7 +124,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
     {
 
     }
-    //m_ComMutex.unlock();
+    m_ComMutex.unlock();
   }
   else
   {
@@ -143,95 +144,104 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
 
   if(m_RouteMapping.find(name) != m_RouteMapping.end())
   {
-      //m_ComMutex.lock();
-      try
+      m_ComMutex.lock();
+      if(m_device_state)
       {
+          try
+          {
+              if(m_RouteMapping[name])
+              {
+                  m_RouteMapping[name]->ReadValue(&m_temp);
 
-        m_RouteMapping[name]->ReadValue(&m_temp);
+                  //ROS_INFO("The %s %s equals %f",varType.c_str(),name.c_str(), res.varValues[0]);
+                  switch(m_VariableMapping[name].first)
+                  {
+                  case BOOL:
+                  {
+                      result =(bool)m_temp;
+                      break;
+                  }
+                  case UINT8_T:
+                  {
+                      result = (uint8_t)m_temp;
+                      break;
+                  }
+                  case INT8_T:
+                  {
+                      result = (int8_t)m_temp;
+                      break;
+                  }
+                  case UINT16_T:
+                  {
+                      result = (uint16_t)m_temp;
+                      break;
+                  }
+                  case INT16_T:
+                  {
+                      result = (int16_t)m_temp;
+                      break;
+                  }
+                  case UINT32_T:
+                  {
+                      result = (uint32_t)m_temp;
+                      break;
+                  }
+                  case INT32_T:
+                  {
+                      result = (int32_t)m_temp;
+                      break;
+                  }
+                  case INT64_T:
+                  {
+                      result = (int64_t)m_temp;
+                      break;
+                  }
+                  case FLOAT:
+                  {
+                      result = (float)m_temp;
+                      break;
+                  }
+                  case DOUBLE:
+                  {
+                      result = (double)m_temp;
+                      break;
+                  }
+                  case DATE:
+                  {
+                      result = (uint32_t)m_temp;
+                      break;
+                  }
+                  default:
+                  {
 
-        //ROS_INFO("The %s %s equals %f",varType.c_str(),name.c_str(), res.varValues[0]);
-        switch(m_VariableMapping[name].first)
-        {
-        case BOOL:
-        {
-            result =(bool)m_temp;
-            break;
-        }
-        case UINT8_T:
-        {
-            result = (uint8_t)m_temp;
-            break;
-        }
-        case INT8_T:
-        {
-            result = (int8_t)m_temp;
-            break;
-        }
-        case UINT16_T:
-        {
-            result = (uint16_t)m_temp;
-            break;
-        }
-        case INT16_T:
-        {
-            result = (int16_t)m_temp;
-            break;
-        }
-        case UINT32_T:
-        {
-            result = (uint32_t)m_temp;
-            break;
-        }
-        case INT32_T:
-        {
-            result = (int32_t)m_temp;
-            break;
-        }
-        case INT64_T:
-        {
-            result = (int64_t)m_temp;
-            break;
-        }
-        case FLOAT:
-        {
-            result = (float)m_temp;
-            break;
-        }
-        case DOUBLE:
-        {
-            result = (double)m_temp;
-            break;
-        }
-        case DATE:
-        {
-            result = (uint32_t)m_temp;
-            break;
-        }
-        default:
-        {
-
-        }
+                  }
+                  }
+              }
+              else
+              {
+                  factory(name);
+              }
+              }
+              catch(...)
+              {
+                  factory(name);
+              }
       }
-      }
-      catch(...)
-      {
-        factory(name);
-      }
-      //m_ComMutex.unlock();
+      m_ComMutex.unlock();
   }
   return result;
 }
 
-bool RosAds_Interface::bindPLcVar(string file, string name)
+bool RosAds_Interface::bindPLcVar()
 {
   bool bresult = false;
-  YAML::Node config = YAML::LoadFile(file);
-  if (config[name])
+  YAML::Node config = YAML::LoadFile(m_config_file);
+  if (config[m_name])
   {
     //ROS_INFO("Reading your PLC config file ...");
 
     //Read each alias with corresponding ADS name
-    for(YAML::const_iterator element=config[name]["variables"].begin();element!=config[name]["variables"].end();++element)
+    for(YAML::const_iterator element=config[m_name]["variables"].begin();element!=config[m_name]["variables"].end();++element)
     {
       string adsName = element->first.as<string>();
       string alias = element->second.as<string>();
@@ -239,7 +249,7 @@ bool RosAds_Interface::bindPLcVar(string file, string name)
       if ( m_VariableADS.find(adsName) == m_VariableADS.end() )
       {
         //ROS_ERROR("Error on ADS alias: %s -> %s",alias.c_str(),adsName.c_str());
-        continue;
+          continue;
       }
 
       //ROS_INFO("ADS alias found: %s -> %s",alias.c_str(),adsName.c_str());
@@ -252,57 +262,57 @@ bool RosAds_Interface::bindPLcVar(string file, string name)
       {
       case BOOL:
       {
-          m_RouteMapping[alias] = new AdsVariable<bool>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<bool>(*m_route, m_Alias_map[alias]);
           break;
       }
       case UINT8_T:
       {
-          m_RouteMapping[alias] = new AdsVariable<uint8_t>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<uint8_t>(*m_route, m_Alias_map[alias]);
           break;
       }
       case INT8_T:
       {
-          m_RouteMapping[alias] = new AdsVariable<int8_t>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<int8_t>(*m_route, m_Alias_map[alias]);
           break;
       }
       case UINT16_T:
       {
-          m_RouteMapping[alias] = new AdsVariable<uint16_t>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<uint16_t>(*m_route, m_Alias_map[alias]);
           break;
       }
       case INT16_T:
       {
-          m_RouteMapping[alias] = new AdsVariable<int16_t>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<int16_t>(*m_route, m_Alias_map[alias]);
           break;
       }
       case UINT32_T:
       {
-          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, m_Alias_map[alias]);
           break;
       }
       case INT32_T:
       {
-          m_RouteMapping[alias] = new AdsVariable<int32_t>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<int32_t>(*m_route, m_Alias_map[alias]);
           break;
       }
       case INT64_T:
       {
-          m_RouteMapping[alias] = new AdsVariable<int64_t>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<int64_t>(*m_route, m_Alias_map[alias]);
           break;
       }
       case FLOAT:
       {
-          m_RouteMapping[alias] = new AdsVariable<float>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<float>(*m_route, m_Alias_map[alias]);
           break;
       }
       case DOUBLE:
       {
-          m_RouteMapping[alias] = new AdsVariable<double>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<double>(*m_route, m_Alias_map[alias]);
           break;
       }
       case DATE:
       {
-          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, adsName);
+          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, m_Alias_map[alias]);
           break;
       }
       default:
@@ -342,16 +352,48 @@ int RosAds_Interface::initRoute()
   return 0;
 }
 
+bool RosAds_Interface::Readstate()
+{
+    auto result = false;
+    m_ComMutex.lock();
+    try {
+        auto test = m_route->GetState();
+        result = (test.ads == ADSSTATE_RUN);
+        m_device_state = result;
+    } catch (...) {
+        m_device_state = result;
+        if(m_route)
+        {
+          delete m_route;
+        }
+        if(m_AmsNetIdremoteNetId)
+        {
+          delete m_AmsNetIdremoteNetId;
+        }
+        initRoute();
+    }
+    auto temp_state = m_device_state;
+    if(!result && !temp_state)
+    {
+        for(auto &[name, alias]: m_VariableMapping)
+        {
+            factory(name);
+        }
+    }
+    m_ComMutex.unlock();
+    return result;
+}
+
 bool RosAds_Interface::factory(string  varName)
 {
     bool result = false;
     try {
-        string type = m_VariableADS[varName];
+        string type = m_VariableADS[m_Alias_map[varName]];
         do{
-          if (m_RouteMapping.find(varName) != m_RouteMapping.end())
-          {
-              delete m_RouteMapping[varName];
-          }
+            if(m_RouteMapping[varName])
+            {
+                delete m_RouteMapping[varName];
+            }
           if(type == "BOOL"){
             m_RouteMapping[varName] = new AdsVariable<bool>(*m_route, m_Alias_map[varName]);
             result = true;
@@ -404,7 +446,7 @@ bool RosAds_Interface::factory(string  varName)
           }
         }
         while(false);
-    } catch (AdsException e) {
+    } catch (...) {
         //ROS_INFO("error factory");
     }
     return result;
