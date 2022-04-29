@@ -2,6 +2,13 @@
 
 using namespace std;
 
+/**
+ * @brief RosAds_Interface simple consctructor
+ */
+RosAds_Interface::RosAds_Interface()
+{
+}
+
 RosAds_Interface::~RosAds_Interface()
 {
   if(m_route)
@@ -19,32 +26,19 @@ RosAds_Interface::~RosAds_Interface()
   }
 }
 
-RosAds_Interface::RosAds_Interface()
-{
-}
-
-int RosAds_Interface::checkVariable(string varName){
-  int varType = -1;
-    map<string,pair<int, string>>::iterator it;
-     it= m_VariableMapping.find(varName);
-  if(it != m_VariableMapping.end())
-  {
-    varType = it->second.first;
-  }
-  return varType;
-}
-
+/**
+ * @brief adsWriteValue writes on a single variable
+ * @param name name of the variable to write on
+ * @param value value of the variable to write on
+ * @return true if the writing succeded
+ * @return false otherwise
+ */
 bool RosAds_Interface::adsWriteValue(string name, variant_t value){
 
-  int varType = checkVariable(name);
+  int varType = checkVariableType(name);
   bool dataCorrect = true;
   bool bresult = true;
-  //Sac à break;
-
- 
-  //La variable n'existe pas
   if( m_VariableMapping.find(name) == m_VariableMapping.end()){
-    //ROS_ERROR("Variable name not correct");
     dataCorrect =  false;
     bresult =  false;
   }
@@ -129,14 +123,17 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
   {
     factory(name);
   }
-
   if(!dataCorrect) {
-    //ROS_ERROR("Data size not correct");
     bresult =  false;
   }
   return bresult;
 }
 
+/**
+ * @brief adsReadValue reads a single variable's value
+ * @param varName name of the variable to read
+ * @return variant_t value of the variable
+ */
 RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
 {
   variant_t result;
@@ -223,7 +220,7 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
               }
               catch(...)
               {
-                  Readstate();
+                  connectionCheck();
               }
       }
       m_MemMutex.unlock();
@@ -232,39 +229,11 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
   return result;
 }
 
-bool RosAds_Interface::bindPLcVar()
-{
-  bool bresult = false;
-  YAML::Node config = YAML::LoadFile(m_config_file);
-  if (config[m_name])
-  {
-
-    //Read each alias with corresponding ADS name
-    for(YAML::const_iterator element=config[m_name]["variables"].begin();element!=config[m_name]["variables"].end();++element)
-    {
-      string adsName = element->first.as<string>();
-      string alias = element->second.as<string>();
-      //Check if ADS name is part of downloaded PLC ADS list
-      if ( m_VariableADS.find(adsName) == m_VariableADS.end() )
-      {
-          continue;
-      }
-
-      string type = m_VariableADS[adsName];
-      m_VariableMapping[alias] = pair<int, string>(convert_type_from_string(type), type);
-      m_variables_map[alias] = pair<string, variant_t>(type, variant_t());
-      m_Alias_map[alias] = adsName;
-      factory(alias);
-    }
-    bresult = true;
-  }
-  else
-  {
-
-  }
-    return bresult;
-}
-
+/**
+ * @brief adsReadVariables reads multiple variables' value
+ * @param varNames names of the variables to read
+ * @return vector<variant_t> values of the variables
+ */
 vector<RosAds_Interface::variant_t> RosAds_Interface::adsReadVariables(vector<string> varNames)
 {
   vector<variant_t> result;
@@ -277,54 +246,11 @@ vector<RosAds_Interface::variant_t> RosAds_Interface::adsReadVariables(vector<st
   return result;
 }
 
-int RosAds_Interface::initRoute()
-{
-  m_AmsNetIdremoteNetId= new AmsNetId(m_remoteNetId);
-  char remoteIpV4[m_remoteIpV4.length()+1];
-  strcpy(remoteIpV4, m_remoteIpV4.c_str());
-  //ROS_ERROR_STREAM(m_AmsNetIdremoteNetId);
-  m_route = new AdsDevice(m_remoteIpV4,*m_AmsNetIdremoteNetId, AMSPORT_R0_PLC_TC3);
-  return 0;
-}
-
-int RosAds_Interface::Readstate()
-{
-    auto result = false;
-    AdsDeviceState test;
-    auto temp_state = m_device_state;
-    m_ComMutex.lock();
-    try {
-        test = m_route->GetState();
-        result = (test.ads == ADSSTATE_RUN);
-        m_device_state = result;
-        m_ads_state = (int)test.ads;
-    } catch (...) {
-    }
-
-    if (!result)
-    {
-        m_device_state = false;
-        if(m_route)
-        {
-          delete m_route;
-        }
-        if(m_AmsNetIdremoteNetId)
-        {
-          delete m_AmsNetIdremoteNetId;
-        }
-        initRoute();
-    }
-    if(result && !temp_state)
-    {
-        for(auto &[name, alias]: m_VariableMapping)
-        {
-            factory(name);
-        }
-    }
-    m_ComMutex.unlock();
-    return (int)test.ads;
-}
-
+/**
+ * @brief factory (re)-create an IADS variable
+ * @param varName the alias of the variable to (re)-create
+ * @return true if the creation succeeded
+ */
 bool RosAds_Interface::factory(string  varName)
 {
     bool result = false;
@@ -395,6 +321,12 @@ bool RosAds_Interface::factory(string  varName)
     return result;
 }
 
+/**
+ * @brief convert_type_from_string gets the type from a string
+ * @param type the type as string
+ * @return the type as int
+ * @return -1 if not a type
+ */
 int RosAds_Interface::convert_type_from_string(string type)
 {
    int result = -1;
@@ -460,22 +392,128 @@ int RosAds_Interface::convert_type_from_string(string type)
    return result;
 }
 
-bool  RosAds_Interface::addVariable(string name)
-{
-    bool result = false;
-    auto it = m_VariableMapping.find(name);
-    if(it != m_VariableMapping.end())
-    {
-        m_variables_map[name] = pair<string, variant_t>(m_VariableMapping[name].second, variant_t());
-        result = true;
-    }
-    return result;
-}
-
+/**
+ * @brief updateMemory update the variables memory
+ */
 void RosAds_Interface::updateMemory()
 {
     for(auto &[name, pair]: m_variables_map)
     {
         pair.second = adsReadValue(name);
     }
+}
+
+/**
+ * @brief initRoute initialize a connection to the ADS device
+ */
+void RosAds_Interface::initRoute()
+{
+  m_AmsNetIdremoteNetId= new AmsNetId(m_remoteNetId);
+  char remoteIpV4[m_remoteIpV4.length()+1];
+  strcpy(remoteIpV4, m_remoteIpV4.c_str());
+  m_route = new AdsDevice(m_remoteIpV4,*m_AmsNetIdremoteNetId, AMSPORT_R0_PLC_TC3);
+}
+
+/**
+ * @brief connectionCheck
+ *
+ * Tries to get ADS state
+ * If the ADS is not running setsm_device state to false, to true otherwise
+ * If the ADS is not running or connection failed, tries to establish a new connection
+ * If connection was down and is up again, recreates all IADS variables (get the new handles)
+ *
+ * @return ads state
+ */
+int RosAds_Interface::connectionCheck()
+{
+    auto result = false;
+    AdsDeviceState test;
+    auto temp_state = m_device_state;
+    m_ComMutex.lock();
+    try {
+        test = m_route->GetState();
+        result = (test.ads == ADSSTATE_RUN);
+        m_device_state = result;
+        m_ads_state = (uint16_t)test.ads;
+    } catch (...) {
+        m_ads_state = ADSSTATE_INVALID;
+    }
+
+    if (!result) //recovery
+    {
+        m_device_state = false;
+        if(m_route)
+        {
+          delete m_route;
+        }
+        if(m_AmsNetIdremoteNetId)
+        {
+          delete m_AmsNetIdremoteNetId;
+        }
+        initRoute();
+    }
+    if(result && !temp_state) //recreate ADSVariables if connexion is re-established
+    {
+        for(auto &[name, alias]: m_VariableMapping)
+        {
+            factory(name);
+        }
+    }
+    m_ComMutex.unlock();
+    return (int)test.ads;
+}
+
+/**
+ * @brief bindPLcVar creates IADS variables for aliased variables given in configuration file
+ * @return true if aliasing succeeded
+ * @return false otherwise
+ */
+bool RosAds_Interface::bindPLcVar()
+{
+  bool bresult = false;
+  YAML::Node config = YAML::LoadFile(m_config_file);
+  if (config[m_name])
+  {
+
+    //Read each alias with corresponding ADS name
+    for(YAML::const_iterator element=config[m_name]["variables"].begin();element!=config[m_name]["variables"].end();++element)
+    {
+      string adsName = element->first.as<string>();
+      string alias = element->second.as<string>();
+      //Check if ADS name is part of downloaded PLC ADS list
+      if ( m_VariableADS.find(adsName) == m_VariableADS.end() )
+      {
+          continue;
+      }
+
+      string type = m_VariableADS[adsName];
+      m_VariableMapping[alias] = pair<int, string>(convert_type_from_string(type), type);
+      m_variables_map[alias] = pair<string, variant_t>(type, variant_t());
+      m_Alias_map[alias] = adsName;
+      factory(alias);
+    }
+    bresult = true;
+  }
+  else
+  {
+
+  }
+    return bresult;
+}
+
+/**
+ * @brief checkVariableType
+ * @param varName the name of the variable to check the type of
+ * @return the type of the variable as int
+ * @return -1 if variable does not exist
+ */
+int RosAds_Interface::checkVariableType(string varName){
+  int varType = -1;
+    map<string,pair<int, string>>::iterator it;
+     it= m_VariableMapping.find(varName);
+  if(it != m_VariableMapping.end())
+  {
+    varType = it->second.first;
+  }
+  return varType;
 }
