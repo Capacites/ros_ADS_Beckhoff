@@ -36,6 +36,7 @@ void ADSNode::timerCallback(int timer_rate)
         m_variables_guard.lock();
         try
         {
+            m_ADS.Readstate();
             if(m_ADS.getState())
             {
                 m_ADS.updateMemory();
@@ -106,15 +107,8 @@ void ADSNode::timerCallback(int timer_rate)
 
                     }
                     }
-                    m_publish_on_event_guard.lock();
-                    if(m_publish_on_event.find(name) != m_publish_on_event.end())
-                    {
-                        m_publish_on_event[name] = m_variables[name];
-                    }
-                    m_publish_on_event_guard.unlock();
-
                     m_publish_on_timer_guard.lock();
-                    if(m_publish_on_timer.find(name) != m_publish_on_timer.end())
+                    if(m_publish_on_timer.find(name) != m_publish_on_timer.end() && m_ADS.getState())
                     {
                         m_publish_on_timer[name] = m_variables[name];
                     }
@@ -138,6 +132,7 @@ void ADSNode::publishStateCallback(int timer_rate)
     {
         m_state_msg.header.stamp = ros::Time::now();
         m_state_msg.state = m_ADS.getState();
+        m_state_msg.error = m_ADS.getADSState();
         m_state_publisher.publish(m_state_msg);
         loop_rate_state.sleep();
     }
@@ -155,13 +150,14 @@ void ADSNode::checkerCallback(int timer_rate)
                 m_publish_on_event_guard.lock();
                 auto publish_on_event = m_publish_on_event;
                 m_publish_on_event_guard.unlock();
+                m_variables_guard.lock();
+                auto variables = m_variables;
+                m_variables_guard.unlock();
 
                 m_publish = false;
                 for(auto &[key, pair_] : publish_on_event)
                 {
-                    m_variables_guard.lock();
-                    m_checker_temp_value = m_variables[key];
-                    m_variables_guard.unlock();
+                    m_checker_temp_value = variables[key];
                     if(pair_ != m_checker_temp_value) // A change has occured
                     {
                         m_publish_on_event_guard.lock();
@@ -367,9 +363,6 @@ int main(int argc, char **argv)
 
     while(ros::ok())
     {
-        //node->timerCallback(test);
-        //node->checkerCallback(test);
-        //node->publishTimerCallback(test);
         ros::spinOnce();
     }
     return 0;

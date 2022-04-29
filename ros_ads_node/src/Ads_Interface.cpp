@@ -4,7 +4,6 @@ using namespace std;
 
 RosAds_Interface::~RosAds_Interface()
 {
-  m_ComMutex.lock();
   if(m_route)
   {
     delete m_route;
@@ -18,7 +17,6 @@ RosAds_Interface::~RosAds_Interface()
   {
      delete it->second;
   }
-  m_ComMutex.unlock();
 }
 
 RosAds_Interface::RosAds_Interface()
@@ -38,7 +36,6 @@ int RosAds_Interface::checkVariable(string varName){
 
 bool RosAds_Interface::adsWriteValue(string name, variant_t value){
 
-
   int varType = checkVariable(name);
   bool dataCorrect = true;
   bool bresult = true;
@@ -51,9 +48,10 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
     dataCorrect =  false;
     bresult =  false;
   }
-  else if (m_VariableMapping[name].first == varType)
+  else if (m_VariableMapping[name].first == varType && m_device_state)
   {
     m_ComMutex.lock();
+    m_MemMutex.lock();
     try
     {
       switch(m_VariableMapping[name].first)
@@ -124,6 +122,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
     {
 
     }
+    m_MemMutex.unlock();
     m_ComMutex.unlock();
   }
   else
@@ -145,6 +144,7 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
   if(m_RouteMapping.find(name) != m_RouteMapping.end())
   {
       m_ComMutex.lock();
+      m_MemMutex.lock();
       if(m_device_state)
       {
           try
@@ -153,7 +153,6 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
               {
                   m_RouteMapping[name]->ReadValue(&m_temp);
 
-                  //ROS_INFO("The %s %s equals %f",varType.c_str(),name.c_str(), res.varValues[0]);
                   switch(m_VariableMapping[name].first)
                   {
                   case BOOL:
@@ -224,9 +223,10 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
               }
               catch(...)
               {
-                  factory(name);
+                  Readstate();
               }
       }
+      m_MemMutex.unlock();
       m_ComMutex.unlock();
   }
   return result;
@@ -238,7 +238,6 @@ bool RosAds_Interface::bindPLcVar()
   YAML::Node config = YAML::LoadFile(m_config_file);
   if (config[m_name])
   {
-    //ROS_INFO("Reading your PLC config file ...");
 
     //Read each alias with corresponding ADS name
     for(YAML::const_iterator element=config[m_name]["variables"].begin();element!=config[m_name]["variables"].end();++element)
@@ -248,84 +247,20 @@ bool RosAds_Interface::bindPLcVar()
       //Check if ADS name is part of downloaded PLC ADS list
       if ( m_VariableADS.find(adsName) == m_VariableADS.end() )
       {
-        //ROS_ERROR("Error on ADS alias: %s -> %s",alias.c_str(),adsName.c_str());
           continue;
       }
-
-      //ROS_INFO("ADS alias found: %s -> %s",alias.c_str(),adsName.c_str());
 
       string type = m_VariableADS[adsName];
       m_VariableMapping[alias] = pair<int, string>(convert_type_from_string(type), type);
       m_variables_map[alias] = pair<string, variant_t>(type, variant_t());
       m_Alias_map[alias] = adsName;
-      switch(m_VariableMapping[alias].first)
-      {
-      case BOOL:
-      {
-          m_RouteMapping[alias] = new AdsVariable<bool>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case UINT8_T:
-      {
-          m_RouteMapping[alias] = new AdsVariable<uint8_t>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case INT8_T:
-      {
-          m_RouteMapping[alias] = new AdsVariable<int8_t>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case UINT16_T:
-      {
-          m_RouteMapping[alias] = new AdsVariable<uint16_t>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case INT16_T:
-      {
-          m_RouteMapping[alias] = new AdsVariable<int16_t>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case UINT32_T:
-      {
-          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case INT32_T:
-      {
-          m_RouteMapping[alias] = new AdsVariable<int32_t>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case INT64_T:
-      {
-          m_RouteMapping[alias] = new AdsVariable<int64_t>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case FLOAT:
-      {
-          m_RouteMapping[alias] = new AdsVariable<float>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case DOUBLE:
-      {
-          m_RouteMapping[alias] = new AdsVariable<double>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      case DATE:
-      {
-          m_RouteMapping[alias] = new AdsVariable<uint32_t>(*m_route, m_Alias_map[alias]);
-          break;
-      }
-      default:
-      {
-
-      }
-      }
+      factory(alias);
     }
     bresult = true;
   }
   else
   {
-    //ROS_INFO("Failed to load the PLC config file");
+
   }
     return bresult;
 }
@@ -352,16 +287,23 @@ int RosAds_Interface::initRoute()
   return 0;
 }
 
-bool RosAds_Interface::Readstate()
+int RosAds_Interface::Readstate()
 {
     auto result = false;
+    AdsDeviceState test;
+    auto temp_state = m_device_state;
     m_ComMutex.lock();
     try {
-        auto test = m_route->GetState();
+        test = m_route->GetState();
         result = (test.ads == ADSSTATE_RUN);
         m_device_state = result;
+        m_ads_state = (int)test.ads;
     } catch (...) {
-        m_device_state = result;
+    }
+
+    if (!result)
+    {
+        m_device_state = false;
         if(m_route)
         {
           delete m_route;
@@ -372,8 +314,7 @@ bool RosAds_Interface::Readstate()
         }
         initRoute();
     }
-    auto temp_state = m_device_state;
-    if(!result && !temp_state)
+    if(result && !temp_state)
     {
         for(auto &[name, alias]: m_VariableMapping)
         {
@@ -381,12 +322,13 @@ bool RosAds_Interface::Readstate()
         }
     }
     m_ComMutex.unlock();
-    return result;
+    return (int)test.ads;
 }
 
 bool RosAds_Interface::factory(string  varName)
 {
     bool result = false;
+    m_MemMutex.lock();
     try {
         string type = m_VariableADS[m_Alias_map[varName]];
         do{
@@ -447,8 +389,9 @@ bool RosAds_Interface::factory(string  varName)
         }
         while(false);
     } catch (...) {
-        //ROS_INFO("error factory");
+
     }
+    m_MemMutex.unlock();
     return result;
 }
 

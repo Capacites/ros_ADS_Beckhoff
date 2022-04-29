@@ -56,8 +56,9 @@ public :
   void addNotification();
 
   int initRoute();
-  bool Readstate();
+  int Readstate();
   bool getState(){return(m_device_state);}
+  int getADSState(){return(m_ads_state);}
   bool bindPLcVar();
   int checkVariable(string varName);
   void acquireVariables(){m_VariableADS = m_route->GetDeviceAdsVariables();}
@@ -72,6 +73,7 @@ private:
   double m_temp;
   string m_name;
   string m_config_file;
+  int m_ads_state;
 
   AmsNetId* m_AmsNetIdremoteNetId;
   AdsDevice* m_route;
@@ -81,7 +83,7 @@ private:
 
   //Mutex utile pour la communication
   mutex m_ComMutex;
-  //mutex m_MemMutex;
+  mutex m_MemMutex;
 
   map<string,string> m_VariableADS;
   map<string,string> m_Alias_map;
