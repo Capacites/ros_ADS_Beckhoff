@@ -14,11 +14,11 @@ test_device:
     - alias2
   
   publish_on_event:
-    - alias1
-    - alias2
+    - alias3
   
   variables:
-    GVL_ROS.TOTO: alias1
-    GVL_ROS.COUNTER: alias2
-    GVL_ROS.BoolTOTO: alias3
-    GVL_ROS.IntTOTO: alias4
+    #GVL_ROS must be replaced by your variable file, GVL_ROS is recommanded for readability
+    GVL_ROS.MySuperVariable1: alias1
+    GVL_ROS.MySuperVariable2: alias2
+    GVL_ROS.MySuperVariable3: alias3
+    GVL_ROS.MySuperVariable4: alias4
