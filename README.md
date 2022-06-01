@@ -103,4 +103,5 @@ ros_ads only supports the following ADS variable types :
 
 ## Utilities
 
-ros_ads_msgs provides a `decode` function to use on a [ros_ads_msgs/ADS] message and returning a list of variants with each variable in it's C++ type in a variant. 
+ros_ads_msgs provides a `decode` function to use on a [ros_ads_msgs/ADS] message and returning `std::map<std::string, variant_t>`.
+`variant_t` is defined as `std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>`.
