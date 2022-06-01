@@ -37,7 +37,7 @@ While continuously updating the state of the ADS device's variables, the node ma
 
 * **`state`** ([ros_ads_msgs/State])
 
-	Publishes the node state in a custom message, the state will be published on timer and on event:
+  Publishes the node state in a custom message, the state will be published on timer and on event:
 	
 		std_msgs/Header header            # header info
 		bool state                        # Data validity
@@ -45,32 +45,32 @@ While continuously updating the state of the ADS device's variables, the node ma
 
 * **`report_timer`** ([ros_ads_msgs/ADS])
 
-	Publishes in a custom message the IO values on timer callback for IOs configured as such in the configuration file:
+  Publishes in a custom message the IO values on timer callback for IOs configured as such in the configuration file:
 	
-		std_msgs/Header header            # header info
-    string[] varNames                 # variables' name list
-    string[] varTypes                 # variables' type list
-    float64[] varValues               # variables' value list
+    std_msgs/Header header            # header info
+    string[] varNames                 # variables name list
+    string[] varTypes                 # variables type list
+    float64[] varValues               # variables value list
 
 * **`report_event`** ([ros_ads_msgs/ADS])
 
-	Publishes in a custom message the IO values on event callback for IOs configured as such in the configuration file:
+  Publishes in a custom message the IO values on event callback for IOs configured as such in the configuration file:
 	
 		std_msgs/Header header            # header info
-    string[] varNames                 # variables' name list
-    string[] varTypes                 # variables' type list
-    float64[] varValues               # variables' value list
+    string[] varNames                 # variables name list
+    string[] varTypes                 # variables type list
+    float64[] varValues               # variables value list
 
 ## Subscribed Topics 
 
 * **`command`** ([ros_ads_msgs/ADS])
 
-	Subscribes to commands, write the received values on the associated outputs of the device:
+  Subscribes to commands, write the received values on the associated outputs of the device:
 	
-		std_msgs/Header header            # header info
-    string[] varNames                 # variables' name list
-    string[] varTypes                 # variables' type list
-    float64[] varValues               # variables' value list
+    std_msgs/Header header            # header info
+    string[] varNames                 # variables name list
+    string[] varTypes                 # variables type list
+    float64[] varValues               # variables value list
 
 ## Parameters
 
