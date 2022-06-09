@@ -20,7 +20,8 @@ AdsDevice::AdsDevice(const std::string& ipV4, AmsNetId netId, uint16_t port)
     : m_NetId(AddRoute(netId, ipV4.c_str()), {[](AmsNetId ams){AdsDelRoute(ams); return 0; }}),
     m_Addr({netId, port}),
     m_LocalPort(new long { AdsPortOpenEx() }, {AdsPortCloseEx})
-{}
+{
+}
 
 long AdsDevice::DeleteNotificationHandle(uint32_t handle) const
 {
@@ -53,6 +54,44 @@ DeviceInfo AdsDevice::GetDeviceInfo() const
     }
     return info;
 }
+
+std::map<string,string> AdsDevice::GetDeviceAdsVariables() const
+{
+    long 			nErr;
+    uint32_t			uiIndex;
+    uint32_t			bytesRead = 0;
+    char* 			pchSymbols = NULL;
+    AdsSymbolUploadInfo   	tAdsSymbolUploadInfo;
+    PAdsSymbolEntry       	pAdsSymbolEntry;
+    std::map<string,string>     lADSVariables;
+
+
+    // Read the length of the variable declaration
+    nErr = ReadReqEx2(ADSIGRP_SYM_UPLOADINFO, 0x0, sizeof(tAdsSymbolUploadInfo), &tAdsSymbolUploadInfo, &bytesRead);
+    if(nErr != 0) {
+      throw AdsException(nErr);
+    }
+    pchSymbols = new char[tAdsSymbolUploadInfo.nSymSize];
+
+    // Read information about the PLC variables 
+    nErr = ReadReqEx2(ADSIGRP_SYM_UPLOAD, 0x0, tAdsSymbolUploadInfo.nSymSize, pchSymbols, &bytesRead);
+    if(nErr != 0) {
+      throw AdsException(nErr);
+    }
+
+    //Output information about the PLC variables
+    pAdsSymbolEntry = (PAdsSymbolEntry)pchSymbols;
+    for (uiIndex = 0; uiIndex < tAdsSymbolUploadInfo.nSymbols; uiIndex++)
+    {
+	std::string nameVar(PADSSYMBOLNAME(pAdsSymbolEntry));
+	std::string typeVar(PADSSYMBOLTYPE(pAdsSymbolEntry));
+	lADSVariables[nameVar] = typeVar;
+        pAdsSymbolEntry = PADSNEXTSYMBOLENTRY(pAdsSymbolEntry); std::cout.flush();
+    }
+
+    return lADSVariables;
+}
+
 
 AdsHandle AdsDevice::GetHandle(const uint32_t offset) const
 {

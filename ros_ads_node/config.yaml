@@ -1,0 +1,24 @@
+#automat map
+
+test_device:
+
+  remoteIP: "172.21.176.50"
+  remoteNetID: "172.18.236.170.1.1"
+  localNetID: "172.21.176.10.1.1"
+  publish_rate: 1 #Hz 
+  refresh_rate: 10 #Hz
+  state_rate: 1 #Hz
+  
+  publish_on_timer: 
+    - alias1
+    - alias2
+  
+  publish_on_event:
+    - alias3
+  
+  variables:
+    #GVL_ROS must be replaced by your variable file, GVL_ROS is recommanded for readability
+    GVL_ROS.MySuperVariable1: alias1
+    GVL_ROS.MySuperVariable2: alias2
+    GVL_ROS.MySuperVariable3: alias3
+    GVL_ROS.MySuperVariable4: alias4

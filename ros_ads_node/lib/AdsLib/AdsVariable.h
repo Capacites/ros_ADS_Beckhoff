@@ -2,8 +2,27 @@
 
 #include "AdsDevice.h"
 
+
+struct IAdsVariable {
+
+  virtual void operator=(const bool& value){}
+  virtual void operator=(const uint8_t& value){}
+  virtual void operator=(const int8_t& value){}
+  virtual void operator=(const uint16_t& value){}
+  virtual void operator=(const int16_t& value){}
+  virtual void operator=(const uint32_t& value){}
+  virtual void operator=(const int32_t& value){}
+  virtual void operator=(const uint64_t& value){}
+  virtual void operator=(const int64_t& value){}
+  virtual void operator=(const float& value){}
+  virtual void operator=(const double& value){}
+ 
+  virtual void ReadValue(double *res){}
+}; 
+
+
 template<typename T>
-struct AdsVariable {
+struct AdsVariable : public IAdsVariable {
     AdsVariable(const AdsDevice& route, const std::string& symbolName)
         : m_Route(route),
         m_IndexGroup(ADSIGRP_SYM_VALBYHND),
@@ -16,16 +35,25 @@ struct AdsVariable {
         m_Handle(route.GetHandle(offset))
     {}
 
-    operator T() const
+   /* operator T()
     {
         T buffer;
         Read(sizeof(buffer), &buffer);
         return buffer;
-    }
+    }*/
 
-    void operator=(const T& value) const
+    void operator=(const T& value)
     {
         Write(sizeof(T), &value);
+
+    }
+
+    void ReadValue(double *res) override
+    {
+	T buffer;
+        Read(sizeof(buffer), &buffer);
+
+        *res = (float)buffer;
     }
 
     template<typename U, size_t N>
@@ -45,6 +73,7 @@ struct AdsVariable {
     void Read(const size_t size, void* data) const
     {
         uint32_t bytesRead = 0;
+
         auto error = m_Route.ReadReqEx2(m_IndexGroup,
                                         *m_Handle,
                                         size,

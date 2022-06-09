@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<launch>
+	<node pkg="ros_ads_node" type="ros_ads_node" name="ros_ads_node" output="screen">
+	    <param name="name" type="str" value="test_device"/>
+	    <param name="config_file" type="str" value="/home/ecn/ros/src/adsbeckhoff/ros_ads_node/config.yaml"/>
+	</node>
+</launch>
