@@ -1,4 +1,0 @@
-{
-    "cmake.sourceDirectory": "${workspaceFolder}/ros_ads/lib/AdsLib",
-    "cmake.configureOnOpen": false
-}
