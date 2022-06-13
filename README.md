@@ -83,7 +83,7 @@ While continuously updating the state of the ADS device's variables, the node ma
 
 ## Configuration file
 
-A configuration file example can be found in `ros_ads_node/` as `config.yaml`
+A configuration file example can be found in `ros_ads_node/config` as `configuration.yaml`
 
 ## Supported types
 
