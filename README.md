@@ -8,7 +8,7 @@ A ROS package for communication with Beckhoff's ADS devices
 
 ### License
 
-The source code is released under a [TODO : license](LICENSE).
+The source code is released under a [MIT License](LICENSE).
 
 ## Installation
 
