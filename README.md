@@ -108,4 +108,4 @@ ros_ads_msgs provides a `decode` function to use on a [ros_ads_msgs/ADS] message
 
 ## Setup your ADS route
 
-![route setup help](https://gitlab.univ-nantes.fr/CAPACITES-ROBOTIQUE_PROCEDES/module-ros/adsbeckhoff/-/blob/master/Add_PLC_route.PNG "route setup help")
+![route setup help](Add_PLC_route.PNG "route setup help")
