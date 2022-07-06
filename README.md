@@ -105,3 +105,7 @@ ros_ads only supports the following ADS variable types :
 
 ros_ads_msgs provides a `decode` function to use on a [ros_ads_msgs/ADS] message and returning `std::map<std::string, variant_t>`.
 `variant_t` is defined as `std::variant<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, int64_t, float, double, tm>`.
+
+## Setup your ADS route
+
+![route setup help](https://gitlab.univ-nantes.fr/CAPACITES-ROBOTIQUE_PROCEDES/module-ros/adsbeckhoff/-/blob/master/Add_PLC_route.PNG "route setup help")
