@@ -38,25 +38,33 @@ bool ADSNode::initialize()
                 m_rate_update = config[m_name]["refresh_rate"].as<int>();
                 m_rate_publish = config[m_name]["publish_rate"].as<int>();
                 m_rate_state = config[m_name]["state_rate"].as<int>();
-                auto onTimer = config[m_name]["publish_on_timer"].as<vector<string>>();
-                for(auto & var: onTimer)
+
+                if(config[m_name]["publish_on_timer"].size() != 0)
                 {
-                    m_publish_on_timer_guard.lock();
-                    m_publish_on_timer[var] = pair<string, double>();
-                    m_publish_on_timer_guard.unlock();
-                    m_variables_guard.lock();
-                    m_variables[var] = pair<string, double>();
-                    m_variables_guard.unlock();
+                    auto onTimer = config[m_name]["publish_on_timer"].as<vector<string>>();
+                    for(auto & var: onTimer)
+                    {
+                        m_publish_on_timer_guard.lock();
+                        m_publish_on_timer[var] = pair<string, double>();
+                        m_publish_on_timer_guard.unlock();
+                        m_variables_guard.lock();
+                        m_variables[var] = pair<string, double>();
+                        m_variables_guard.unlock();
+                    }
                 }
-                auto onEvent = config[m_name]["publish_on_event"].as<vector<string>>();
-                for(auto & var: onEvent)
+
+                if(config[m_name]["publish_on_event"].size() != 0)
                 {
-                    m_publish_on_event_guard.lock();
-                    m_publish_on_event[var] = pair<string, double>();
-                    m_publish_on_event_guard.unlock();
-                    m_variables_guard.lock();
-                    m_variables[var] = pair<string, double>();
-                    m_variables_guard.unlock();
+                    auto onEvent = config[m_name]["publish_on_event"].as<vector<string>>();
+                    for(auto & var: onEvent)
+                    {
+                        m_publish_on_event_guard.lock();
+                        m_publish_on_event[var] = pair<string, double>();
+                        m_publish_on_event_guard.unlock();
+                        m_variables_guard.lock();
+                        m_variables[var] = pair<string, double>();
+                        m_variables_guard.unlock();
+                    }
                 }
             }
         } catch (...)
