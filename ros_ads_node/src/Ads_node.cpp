@@ -111,7 +111,7 @@ bool ADSNode::initialize()
 
     try
     {
-        m_subscriber = n.subscribe<ros_ads_msgs::ADS>("command", 1, boost::bind(&ADSNode::Subscriber, this, _1));
+        m_subscriber = n.subscribe<ros_ads_msgs::ADS>("command", 10, boost::bind(&ADSNode::Subscriber, this, _1));
         m_on_event_publisher = n.advertise<ros_ads_msgs::ADS>("report_event", 10);
         m_on_timer_publisher = n.advertise<ros_ads_msgs::ADS>("report_timer", 10);
         m_state_publisher = n.advertise<ros_ads_msgs::State>("state", 10);
