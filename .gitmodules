@@ -1,0 +1,3 @@
+[submodule "ros_ads_node/lib/ADS"]
+	path = ros_ads_node/lib/ADS
+	url = https://github.com/Capacites/ADS.git

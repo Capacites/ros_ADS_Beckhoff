@@ -38,18 +38,18 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_library(libAdsLib lib/AdsLib/AdsDef.cpp
-                      lib/AdsLib/AdsDevice.cpp
-                      lib/AdsLib/AdsFile.cpp
-                      lib/AdsLib/Log.cpp
-                      lib/AdsLib/Sockets.cpp
-                      lib/AdsLib/Frame.cpp
-                      lib/AdsLib/standalone/AdsLib.cpp
-                      lib/AdsLib/standalone/AmsConnection.cpp
-                      lib/AdsLib/standalone/AmsNetId.cpp
-                      lib/AdsLib/standalone/AmsPort.cpp
-                      lib/AdsLib/standalone/AmsRouter.cpp
-                      lib/AdsLib/standalone/NotificationDispatcher.cpp
+add_library(libAdsLib lib/ADS/AdsLib/AdsDef.cpp
+                      lib/ADS/AdsLib/AdsDevice.cpp
+                      lib/ADS/AdsLib/AdsFile.cpp
+                      lib/ADS/AdsLib/Log.cpp
+                      lib/ADS/AdsLib/Sockets.cpp
+                      lib/ADS/AdsLib/Frame.cpp
+                      lib/ADS/AdsLib/standalone/AdsLib.cpp
+                      lib/ADS/AdsLib/standalone/AmsConnection.cpp
+                      lib/ADS/AdsLib/standalone/AmsNetId.cpp
+                      lib/ADS/AdsLib/standalone/AmsPort.cpp
+                      lib/ADS/AdsLib/standalone/AmsRouter.cpp
+                      lib/ADS/AdsLib/standalone/NotificationDispatcher.cpp
 
 )
 
