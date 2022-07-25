@@ -3,9 +3,9 @@
 
 #include <yaml-cpp/yaml.h>
 #include <cstdlib>
-#include "../lib/AdsLib/standalone/AdsDef.h"
-#include "../lib/AdsLib/AdsLib.h"
-#include "../lib/AdsLib/AdsVariable.h"
+#include "../lib/ADS/AdsLib/standalone/AdsDef.h"
+#include "../lib/ADS/AdsLib/AdsLib.h"
+#include "../lib/ADS/AdsLib/AdsVariable.h"
 #include <time.h>
 #include <boost/thread/thread.hpp>
 #include <variant>
