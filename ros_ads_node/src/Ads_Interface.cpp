@@ -38,6 +38,7 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
   int varType = checkVariableType(name);
   bool dataCorrect = true;
   bool bresult = true;
+  auto no_issue = true;
   if( m_VariableMapping.find(name) == m_VariableMapping.end()){
     dataCorrect =  false;
     bresult =  false;
@@ -108,13 +109,13 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
       }
       default:
       {
-
+            no_issue = false;
       }
       }
     }
     catch(AdsException e)
     {
-
+        no_issue = false;
     }
     m_MemMutex.unlock();
     m_ComMutex.unlock();
@@ -123,6 +124,10 @@ bool RosAds_Interface::adsWriteValue(string name, variant_t value){
   {
     factory(name);
   }
+  if(!no_issue){
+      factory(name);
+  }
+
   if(!dataCorrect) {
     bresult =  false;
   }
@@ -140,6 +145,7 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
 
   if(m_RouteMapping.find(name) != m_RouteMapping.end())
   {
+      auto no_issue = true;
       m_ComMutex.lock();
       m_MemMutex.lock();
       if(m_device_state)
@@ -215,16 +221,20 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
               }
               else
               {
-                  factory(name);
+                  no_issue = false;
               }
               }
               catch(...)
               {
-                  connectionCheck();
+                no_issue = false;
               }
       }
       m_MemMutex.unlock();
       m_ComMutex.unlock();
+      if(!no_issue)
+      {
+          factory(name);
+      }
   }
   return result;
 }
@@ -254,6 +264,7 @@ vector<RosAds_Interface::variant_t> RosAds_Interface::adsReadVariables(vector<st
 bool RosAds_Interface::factory(string  varName)
 {
     bool result = false;
+    auto no_issue = true;
     m_MemMutex.lock();
     try {
         string type = m_VariableADS[m_Alias_map[varName]];
@@ -315,9 +326,15 @@ bool RosAds_Interface::factory(string  varName)
         }
         while(false);
     } catch (...) {
-
+        no_issue = false;
     }
     m_MemMutex.unlock();
+
+    if(!no_issue){
+        m_ads_state = false;
+        connectionCheck();
+    }
+
     return result;
 }
 
@@ -431,7 +448,6 @@ int RosAds_Interface::connectionCheck()
     try {
         test = m_route->GetState();
         result = (test.ads == ADSSTATE_RUN);
-        m_device_state = result;
         m_ads_state = (uint16_t)test.ads;
     } catch (...) {
         m_ads_state = ADSSTATE_INVALID;
@@ -439,7 +455,6 @@ int RosAds_Interface::connectionCheck()
 
     if (!result) //recovery
     {
-        m_device_state = false;
         if(m_route)
         {
           delete m_route;
@@ -450,14 +465,19 @@ int RosAds_Interface::connectionCheck()
         }
         initRoute();
     }
+    m_ComMutex.unlock();
+
     if(result && !temp_state) //recreate ADSVariables if connexion is re-established
     {
+        acquireVariables();
         for(auto &[name, alias]: m_VariableMapping)
         {
             factory(name);
         }
     }
-    m_ComMutex.unlock();
+
+    m_device_state = result;
+
     return (int)test.ads;
 }
 
