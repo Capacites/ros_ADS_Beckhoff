@@ -409,9 +409,7 @@ void RosAds_Interface::updateMemory()
 void RosAds_Interface::initRoute()
 {
   m_AmsNetIdremoteNetId= new AmsNetId(m_remoteNetId);
-  char remoteIpV4[m_remoteIpV4.length()+1];
-  strcpy(remoteIpV4, m_remoteIpV4.c_str());
-  m_route = new AdsDevice(m_remoteIpV4,*m_AmsNetIdremoteNetId, AMSPORT_R0_PLC_TC3);
+  m_route = new AdsDevice(m_remoteIpV4.c_str(),*m_AmsNetIdremoteNetId, AMSPORT_R0_PLC_TC3);
 }
 
 /**

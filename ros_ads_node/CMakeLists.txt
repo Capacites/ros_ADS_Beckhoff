@@ -9,8 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+find_package(Threads REQUIRED)
 set(CMAKE_BUILD_TYPE debug)
 
+add_subdirectory(lib/ADS/AdsLib)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -26,10 +28,12 @@ find_package(TinyXML REQUIRED)
 find_library(yaml-cpp REQUIRED)
 
 catkin_package(
-  LIBRARIES RosAdsLib
+  LIBRARIES 
   CATKIN_DEPENDS roscpp std_msgs roslib
 #  DEPENDS system_lib
 )
+
+
 
 include_directories(
   include
@@ -37,29 +41,15 @@ include_directories(
   ${TinyXML_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-add_library(libAdsLib lib/ADS/AdsLib/AdsDef.cpp
-                      lib/ADS/AdsLib/AdsDevice.cpp
-                      lib/ADS/AdsLib/AdsFile.cpp
-                      lib/ADS/AdsLib/Log.cpp
-                      lib/ADS/AdsLib/Sockets.cpp
-                      lib/ADS/AdsLib/Frame.cpp
-                      lib/ADS/AdsLib/standalone/AdsLib.cpp
-                      lib/ADS/AdsLib/standalone/AmsConnection.cpp
-                      lib/ADS/AdsLib/standalone/AmsNetId.cpp
-                      lib/ADS/AdsLib/standalone/AmsPort.cpp
-                      lib/ADS/AdsLib/standalone/AmsRouter.cpp
-                      lib/ADS/AdsLib/standalone/NotificationDispatcher.cpp
 
-)
 
 add_executable(ros_ads_node src/Ads_Interface.cpp src/Ads_node.cpp)
-add_dependencies(ros_ads_node libAdsLib)
-add_dependencies(ros_ads_node ${catkin_EXPORTED_TARGETS})
+add_dependencies(ros_ads_node ${catkin_EXPORTED_TARGETS} )
+add_dependencies(ros_ads_node  ads)
 set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD 17)
 set_property(TARGET ros_ads_node PROPERTY CXX_STANDARD_REQUIRED ON)
 
-target_link_libraries(ros_ads_node ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} yaml-cpp libAdsLib -lpthread )
+target_link_libraries(ros_ads_node ${catkin_LIBRARIES} ${TinyXML_LIBRARIES} yaml-cpp ads  -lpthread )
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
