@@ -112,6 +112,8 @@ ros_ads_msgs provides a `decode` function to use on a [ros_ads_msgs/ADS] message
 
 ## Limitation
 
-You can connect different device with different remote ip to same ip on PC
+You can connect different devices with different remote ip to same ip on PC
 
-You can't create multiple route between same PC IP adesse and same IP device (this route made by other process like through pyads,.... ) 
+You can't create multiple route between same PC IP adesse and same IP device. 
+If do this, you could have connection issue/
+if you still have connection issue check if an other process use this route (pyads,.... ) .
