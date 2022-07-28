@@ -109,3 +109,9 @@ ros_ads_msgs provides a `decode` function to use on a [ros_ads_msgs/ADS] message
 ## Setup your ADS route
 
 ![route setup help](Add_PLC_route.PNG "route setup help")
+
+## Limitation
+
+You can connect device with different remote ip to same ip on PC
+
+You can't create multiple route between same PC IP adesse and same IP device (this route made by other process like through pyads,.... ) 
