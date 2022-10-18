@@ -27,6 +27,11 @@ The source code is released under a [MIT License](LICENSE).
 
 ## Node
 
+
+#### Architecture
+![Achitecture](Archi.PNG "Achitecture")
+
+
 The package provides a C++ node: `rosrun ros_ads_node ros_ads_node`
 
 While continuously updating the state of the ADS device's variables, the node may publish two types of messages:
