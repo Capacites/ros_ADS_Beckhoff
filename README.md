@@ -29,7 +29,8 @@ The source code is released under a [MIT License](LICENSE).
 
 
 #### Architecture
-![Achitecture](Archi.PNG "Achitecture")
+
+![Archi](Archi.png "Achitecture")
 
 
 The package provides a C++ node: `rosrun ros_ads_node ros_ads_node`
