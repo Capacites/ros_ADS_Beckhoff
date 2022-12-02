@@ -154,63 +154,63 @@ RosAds_Interface::variant_t RosAds_Interface::adsReadValue(string name)
           {
               if(m_RouteMapping[name])
               {
-                  m_RouteMapping[name]->ReadValue(&m_temp);
-
+                  void* value =(void*)&m_temp;
+                  m_RouteMapping[name]->ReadValue(value);
                   switch(m_VariableMapping[name].first)
                   {
                   case BOOL:
                   {
-                      result =(bool)m_temp;
+                      result =*(bool*)value;
                       break;
                   }
                   case UINT8_T:
                   {
-                      result = (uint8_t)m_temp;
+                      result = *(uint8_t*)value;
                       break;
                   }
                   case INT8_T:
                   {
-                      result = (int8_t)m_temp;
+                      result = *(int8_t*)value;
                       break;
                   }
                   case UINT16_T:
                   {
-                      result = (uint16_t)m_temp;
+                      result = *(uint16_t*)value;
                       break;
                   }
                   case INT16_T:
                   {
-                      result = (int16_t)m_temp;
+                      result = *(int16_t*)value;
                       break;
                   }
                   case UINT32_T:
                   {
-                      result = (uint32_t)m_temp;
+                      result = *(uint32_t*)value;
                       break;
                   }
                   case INT32_T:
                   {
-                      result = (int32_t)m_temp;
+                      result = *(int32_t*)value;
                       break;
                   }
                   case INT64_T:
                   {
-                      result = (int64_t)m_temp;
+                      result = *(int64_t*)value;
                       break;
                   }
                   case FLOAT:
                   {
-                      result = (float)m_temp;
+                      result = *(float*)value;
                       break;
                   }
                   case DOUBLE:
                   {
-                      result = (double)m_temp;
+                      result = *(double*)value;
                       break;
                   }
                   case DATE:
                   {
-                      result = (uint32_t)m_temp;
+                      result = *(uint32_t*)value;
                       break;
                   }
                   default:
