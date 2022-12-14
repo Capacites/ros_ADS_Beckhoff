@@ -21,9 +21,9 @@ The source code is released under a [MIT License](LICENSE).
 #### Building
 
 	cd ros_workspace/src
-	git clone -b main --recursive https://gitlab.univ-nantes.fr/CAPACITES-ROBOTIQUE_PROCEDES/module-ros/adsbeckhoff.git
+	git clone -b main --recursive https://github.com/Capacites/ros_ADS_Beckhoff.git
 	cd ..
-	catkin build
+	catkin_make
 
 ## Node
 
